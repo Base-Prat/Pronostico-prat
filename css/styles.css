@@ -619,3 +619,52 @@ header {
 
 /* Marca de oleaje estimado desde el viento local */
 .mt-est { color: #1f6f8b; font-size: 0.72em; font-weight: 900; font-style: italic; }
+
+/* ════════════════════════════════════════════════════════════════
+   Corrección de desplazamiento horizontal en móvil
+   La tira de días usaba columnas flexibles (1fr), que comprimen el
+   contenido para caber en pantalla en vez de desbordar: sin
+   desborde no hay nada que deslizar. Se fija un ancho mínimo real
+   para que la tira exceda el viewport y el scroll táctil funcione.
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .resumen-tira {
+    grid-auto-columns: 104px;      /* ancho fijo, sin 1fr */
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding-bottom: 10px;
+    /* Sangrado a los bordes de la pantalla para que se note que
+       hay más contenido a la derecha. */
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .resumen-dia { scroll-snap-align: start; }
+
+  /* Barra de desplazamiento visible y delgada: en móvil la barra
+     oculta impide saber que el contenido continúa. */
+  .resumen-tira::-webkit-scrollbar { height: 5px; }
+  .resumen-tira::-webkit-scrollbar-thumb {
+    background: #9fb2c6; border-radius: 3px;
+  }
+  .resumen-tira::-webkit-scrollbar-track { background: #edf2f7; }
+
+  /* Igual tratamiento para la meteotabla, que ya funcionaba pero
+     sin barra visible. */
+  .mt-scroll::-webkit-scrollbar { height: 5px; }
+  .mt-scroll::-webkit-scrollbar-thumb {
+    background: #9fb2c6; border-radius: 3px;
+  }
+  .mt-scroll::-webkit-scrollbar-track { background: #edf2f7; }
+}
+
+@media (max-width: 768px) {
+  /* Evita que textos largos de una celda desborden el panel y
+     empujen el ancho de la página completa. */
+  .b6-col { min-width: 0; overflow-wrap: anywhere; }
+  .b6-fila { min-width: 0; }
+  .grid-container { overflow-x: hidden; }
+}
