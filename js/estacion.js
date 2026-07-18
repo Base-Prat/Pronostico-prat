@@ -3,10 +3,10 @@
 //  Fuente: Open-Meteo (datos abiertos).
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG } from "./config.js?v=20260718082231";
+import { CONFIG } from "./config.js?v=20260718083456";
 import {
   gradosARumbo, windChill, colorUV, fetchConTimeout,
-} from "./utils.js?v=20260718082231";
+} from "./utils.js?v=20260718083456";
 
 const OPEN_METEO_CURRENT =
   `https://api.open-meteo.com/v1/forecast?latitude=${CONFIG.estacion.lat}` +
@@ -73,7 +73,7 @@ function plantillaMetricas(c) {
     <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>
     ${rh != null ? `<div class="sep">|</div><div class="metric-item"><div class="metric-val">${Math.round(rh)}%</div><div class="metric-label">Humedad Rel.</div></div>` : ""}
     <div class="sep">|</div>
-    <div class="metric-item"><div class="metric-val fuente">Estación Base Prat</div><div class="metric-label small">FUENTE</div></div>`;
+    <div class="metric-item"><div class="metric-val fuente">Modelo numérico</div><div class="metric-label small">FUENTE</div></div>`;
 }
 
 export async function actualizarEstacion() {
@@ -94,7 +94,7 @@ export async function actualizarEstacion() {
     console.error("Error al sincronizar estación:", e);
     // Solo muestra el mensaje de error si no hay datos previos en pantalla.
     if (!cont.querySelector(".metric-item")) {
-      cont.innerHTML = `<span class="metrics-error">⚠️ Sin conexión con la estación. Reintentando…</span>`;
+      cont.innerHTML = `<span class="metrics-error">⚠️ Sin conexión con el servidor de datos. Reintentando…</span>`;
     }
   }
 }

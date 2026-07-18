@@ -2,8 +2,8 @@
 //  GRÁFICOS — modal de detalle horario con Chart.js
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG } from "./config.js?v=20260718082231";
-import { fetchConTimeout } from "./utils.js?v=20260718082231";
+import { CONFIG } from "./config.js?v=20260718083456";
+import { fetchConTimeout } from "./utils.js?v=20260718083456";
 
 let charts = {};
 

@@ -1088,3 +1088,18 @@ header {
     display: table-cell !important;
   }
 }
+
+/* Refuerzo: asegura que el detalle 3h se comporte como tabla y
+   desborde en móvil, por encima de cualquier regla previa. */
+.b6-panel .b6-scroll { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+.b6-panel .b6-tabla { min-width: 640px !important; display: table !important; }
+.b6-panel .b6-tabla thead { display: table-header-group !important; }
+.b6-panel .b6-tabla tbody { display: table-row-group !important; }
+.b6-panel .b6-tabla tr { display: table-row !important; }
+.b6-panel .b6-tabla td,
+.b6-panel .b6-tabla th { display: table-cell !important; }
+
+@media (max-width: 768px) {
+  .b6-panel .b6-header { display: table-row !important; }
+  .b6-panel .b6-tabla { min-width: 600px !important; }
+}

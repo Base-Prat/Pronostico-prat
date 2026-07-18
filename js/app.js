@@ -3,13 +3,13 @@
 //  estación en vivo, pronóstico y calculadora.
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG, SECTORES, GRUPO_LABELS, ENLACES_GLACIOLOGICOS } from "./config.js?v=20260718082231";
-import { getModelRunInfo, esc } from "./utils.js?v=20260718082231";
-import { actualizarEstacion } from "./estacion.js?v=20260718082231";
-import { setSectorActivo } from "./pronostico.js?v=20260718082231";
-import { cerrarModal } from "./graficos.js?v=20260718082231";
-import { initCalculadora } from "./calculadora.js?v=20260718082231";
-import { cargarMeteotabla } from "./meteotabla.js?v=20260718082231";
+import { CONFIG, SECTORES, GRUPO_LABELS, ENLACES_GLACIOLOGICOS } from "./config.js?v=20260718083456";
+import { getModelRunInfo, esc } from "./utils.js?v=20260718083456";
+import { actualizarEstacion } from "./estacion.js?v=20260718083456";
+import { setSectorActivo } from "./pronostico.js?v=20260718083456";
+import { cerrarModal } from "./graficos.js?v=20260718083456";
+import { initCalculadora } from "./calculadora.js?v=20260718083456";
+import { cargarMeteotabla } from "./meteotabla.js?v=20260718083456";
 
 // ── Enlaces del sidebar (fuentes externas oficiales) ─────────────
 function initEnlacesSidebar() {
@@ -90,12 +90,20 @@ function cerrarSidebar() {
   document.getElementById("sidebar-overlay").classList.remove("active");
 }
 function verVersionEscritorio() {
-  if (window.innerWidth < 1025) {
-    document.querySelector('meta[name="viewport"]')
-      .setAttribute("content", "width=1280,initial-scale=0.45,minimum-scale=0.3");
+  const vp = document.querySelector('meta[name="viewport"]');
+  const btn = document.querySelector(".btn-ver-web");
+  const activo = document.body.classList.toggle("vista-escritorio");
+
+  if (activo) {
+    // Ancho fijo de escritorio, pero sin bloquear el zoom del usuario.
+    vp?.setAttribute("content", "width=1280, initial-scale=0.45");
+    if (btn) btn.textContent = "📱 Ver versión móvil";
+    document.querySelector(".hamburger-btn")?.style.setProperty("display", "none");
+  } else {
+    vp?.setAttribute("content", "width=device-width, initial-scale=1.0, viewport-fit=cover");
+    if (btn) btn.textContent = "🖥️ Ver versión escritorio";
+    document.querySelector(".hamburger-btn")?.style.removeProperty("display");
   }
-  document.querySelector(".btn-ver-web")?.style.setProperty("display", "none");
-  document.querySelector(".hamburger-btn")?.style.setProperty("display", "none");
 }
 
 // ── Arranque ─────────────────────────────────────────────────────

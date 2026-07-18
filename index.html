@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Sistema meteorológico de apoyo para sectores antárticos y Paso Drake." />
   <title>Sistema Meteorológico Antártico | Apoyo a la decisión</title>
 
@@ -12,8 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
 
   <!-- Estilos propios -->
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/widget.css" />
+  <link rel="stylesheet" href="css/styles.css?v=20260718083456" />
+  <link rel="stylesheet" href="css/widget.css?v=20260718083456" />
   <base target="_blank" />
 </head>
 <body>
@@ -58,7 +58,7 @@
           <div class="badge-oceanico" id="badge-oceanico" style="display:none"></div>
         </div>
         <div class="header-lower">
-          <div class="current-metrics" id="header-metrics">Sincronizando con estación…</div>
+          <div class="current-metrics" id="header-metrics">Cargando condiciones actuales…</div>
           <div class="ops-traffic-light">
             <span class="ops-title">Estado ops:</span>
             <div class="ops-light" id="light-botes"><span class="dot"></span> BOTES</div>
@@ -149,7 +149,7 @@
       <label for="inp-v">Velocidad viento (nudos)</label>
       <input type="number" id="inp-v" placeholder="Ej: 20" step="1" />
       <div class="wc-row">
-        <button class="wc-btn-sync" id="btn-sync">Sincronizar estación</button>
+        <button class="wc-btn-sync" id="btn-sync">Usar datos actuales</button>
         <button class="wc-btn-calc" id="btn-calc">Calcular</button>
       </div>
       <div id="prat-result-box" class="wc-result">
@@ -162,6 +162,6 @@
   </div>
 
   <!-- Lógica (módulos ES) -->
-  <script type="module" src="js/app.js?v=20260718082231"></script>
+  <script type="module" src="js/app.js?v=20260718083456"></script>
 </body>
 </html>
