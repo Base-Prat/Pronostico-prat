@@ -915,3 +915,108 @@ header {
   /* La imagen de fondo acompaña la altura variable. */
   .header-bg-img { height: 100% !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   TIRA DE DÍAS — estructura de tabla
+   El CSS Grid no desbordaba de forma fiable en móvil. Se replica la
+   estructura de la meteotabla, que sí funciona: un contenedor con
+   overflow-x y dentro una <table>, que tiene ancho intrínseco y
+   desborda de forma natural.
+   ════════════════════════════════════════════════════════════════ */
+.resumen-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+.resumen-tabla {
+  border-collapse: separate;
+  border-spacing: 8px 0;
+  table-layout: auto;
+}
+.rd-celda { padding: 0; vertical-align: top; }
+.resumen-dia { width: 118px; }
+
+/* Barra de desplazamiento visible, igual que en la meteotabla. */
+.resumen-scroll::-webkit-scrollbar { height: 6px; }
+.resumen-scroll::-webkit-scrollbar-thumb { background: #9fb2c6; border-radius: 3px; }
+.resumen-scroll::-webkit-scrollbar-track { background: #edf2f7; border-radius: 3px; }
+
+@media (max-width: 768px) {
+  .resumen-dia { width: 104px; padding: 10px 5px; }
+  .resumen-tabla { border-spacing: 6px 0; }
+  .resumen-scroll { touch-action: pan-x; }
+}
+
+/* Neutraliza las reglas de grid anteriores: el contenedor
+   #resumen-tira ahora es .resumen-scroll y no debe comportarse
+   como grid. */
+.resumen-tira,
+#resumen-tira {
+  display: block !important;
+  grid-auto-flow: unset !important;
+  grid-auto-columns: unset !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BANNER MÓVIL — reconstrucción del bloque de métricas
+   Las métricas se superponían por ir en una sola línea dentro de un
+   header de alto fijo. Se saca del header y se apila debajo.
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  header, .main-content header {
+    min-height: auto !important;
+    height: auto !important;
+    padding-bottom: 0 !important;
+  }
+  .header-inner {
+    display: block !important;
+    height: auto !important;
+    padding: 52px 10px 12px !important;
+  }
+  .location-title-wrap { margin-bottom: 10px; }
+
+  .header-lower {
+    display: block !important;
+    width: 100% !important;
+  }
+  .current-metrics {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px 6px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+  }
+  .current-metrics .sep { display: none !important; }
+  .metric-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    text-align: center !important;
+  }
+  .metric-val {
+    font-size: 0.78rem !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+  .metric-label {
+    font-size: 0.48rem !important;
+    text-align: center !important;
+    line-height: 1.15 !important;
+  }
+  .ops-traffic-light {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 0.62rem !important;
+    padding: 7px 8px !important;
+    border-radius: 12px !important;
+  }
+}

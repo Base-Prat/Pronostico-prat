@@ -3,10 +3,10 @@
 //  tarjetas por día y abre el detalle horario (Open-Meteo).
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG, getCSVUrl } from "./config.js?v=20260718080728";
-import { esc } from "./utils.js?v=20260718080728";
-import { abrirDetalleHorario } from "./graficos.js?v=20260718080728";
-import { construirResumen } from "./vista-resumen.js?v=20260718080728";
+import { CONFIG, getCSVUrl } from "./config.js?v=20260718081359";
+import { esc } from "./utils.js?v=20260718081359";
+import { abrirDetalleHorario } from "./graficos.js?v=20260718081359";
+import { construirResumen } from "./vista-resumen.js?v=20260718081359";
 
 let sectorActivo = null;
 let filasPronostico = [];

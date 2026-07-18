@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260718080728";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718080728";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718080728";
+import { esc, getModelRunInfo } from "./utils.js?v=20260718081359";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718081359";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718081359";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
@@ -36,7 +36,7 @@ function tarjetaDia(dia, resumen, activo, idx) {
   const claseRiesgo = RIESGO_CLASE[resumen.riesgoViento] || "";
 
   return `
-    <button class="resumen-dia ${claseRiesgo} ${activo ? "active" : ""}" data-idx="${idx}" data-dia="${esc(dia)}">
+    <td class="rd-celda"><button class="resumen-dia ${claseRiesgo} ${activo ? "active" : ""}" data-idx="${idx}" data-dia="${esc(dia)}">
       <div class="rd-nombre">${esc(nombre)}</div>
       <div class="rd-fecha">${esc(fecha)}</div>
       <div class="rd-icono">${iconoTiempo(resumen.cielo, resumen.precip, resumen.intensidad)}</div>
@@ -47,7 +47,7 @@ function tarjetaDia(dia, resumen, activo, idx) {
         <span class="rd-viento-val">${vientoTxt(resumen.viento)}</span>
       </div>
       <div class="rd-dir">${esc(resumen.viento.dir || "")}</div>
-    </button>`;
+    </button></td>`;
 }
 
 // Mapa de riesgo → clase de color de fondo (semáforo del sitio).
@@ -102,7 +102,9 @@ export function construirResumen(filas, diaSeleccionado) {
     <div class="resumen-wrap">
       <div class="resumen-tira-cont">
         <button class="tira-nav tira-nav-izq" id="tira-izq" aria-label="Días anteriores">‹</button>
-        <div class="resumen-tira" id="resumen-tira">${tira}</div>
+        <div class="resumen-scroll" id="resumen-tira">
+          <table class="resumen-tabla"><tbody><tr>${tira}</tr></tbody></table>
+        </div>
         <button class="tira-nav tira-nav-der" id="tira-der" aria-label="Días siguientes">›</button>
       </div>
 
