@@ -792,3 +792,126 @@ header {
   /* En escritorio las flechas solo aparecen si hacen falta. */
   .tira-nav { width: 30px; height: 30px; font-size: 1.2rem; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   CORRECCIÓN FINAL — desplazamiento y banner en móvil
+   Problema anterior: al quitar overflow-x del contenedor padre, el
+   desborde pasó a la página completa (se movía todo el sitio en vez
+   de la tira). La solución correcta es que el padre SÍ recorte y
+   que la tira tenga un ancho acotado con scroll propio.
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* El contenedor vuelve a contener: nada debe desbordar la página. */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+  .main-content {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .grid-container {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  .resumen-wrap {
+    overflow: hidden !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* La tira: ancho limitado al del contenedor, con scroll interno.
+     min-width:0 es imprescindible en grid/flex para que el hijo
+     pueda encogerse por debajo de su contenido y activar overflow. */
+  .resumen-tira-cont {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+  .resumen-tira {
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: 100px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+    overscroll-behavior-x: contain !important;
+    scroll-snap-type: x mandatory;
+  }
+  .resumen-dia {
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  /* Igual para la meteotabla. */
+  .meteotabla-section { max-width: 100% !important; min-width: 0 !important; overflow: hidden !important; }
+  .mt-scroll {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+    overscroll-behavior-x: contain !important;
+  }
+}
+
+/* ── Banner en móvil: altura flexible y métricas apiladas ──
+   El header tenía min-height fijo y .header-lower en una sola línea
+   (nowrap): con seis métricas más el semáforo, el contenido se
+   encimaba. Se permite crecer en alto y envolver en varias filas. */
+@media (max-width: 768px) {
+  header {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+  .header-inner {
+    height: auto !important;
+    padding: 55px 12px 14px !important;
+    gap: 10px;
+  }
+  .header-lower {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+  .current-metrics {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 8px 12px !important;
+    padding: 10px !important;
+    border-radius: 14px !important;
+    align-self: stretch !important;
+    flex-shrink: 1 !important;
+  }
+  .metric-item {
+    flex: 0 0 auto !important;
+    min-width: 0;
+  }
+  .ops-traffic-light {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    align-self: stretch !important;
+    flex-shrink: 1 !important;
+  }
+  /* La imagen de fondo acompaña la altura variable. */
+  .header-bg-img { height: 100% !important; }
+}

@@ -37,3 +37,28 @@
 @media (max-width: 768px) {
   .wc-widget { width: calc(100vw - 40px) !important; right: 10px !important; bottom: 10px !important; left: auto !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   MÓVIL — el widget colapsado debe ser un botón pequeño, no una
+   barra de ancho completo. La regla anterior forzaba 100vw incluso
+   colapsado, tapando el contenido y capturando el gesto táctil.
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .wc-widget.collapsed {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    right: 14px !important;
+    bottom: 14px !important;
+    left: auto !important;
+  }
+  .wc-widget.collapsed .wc-head {
+    padding: 12px !important;
+    justify-content: center !important;
+  }
+  /* Expandido sí ocupa el ancho, pero sin tapar la barra inferior. */
+  .wc-widget:not(.collapsed) {
+    width: calc(100vw - 28px) !important;
+    bottom: 14px !important;
+  }
+}
