@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260718081359";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718081359";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718081359";
+import { esc, getModelRunInfo } from "./utils.js?v=20260718082231";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718082231";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718082231";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
@@ -62,18 +62,18 @@ const RIESGO_CLASE = {
 function filaBloque(b) {
   const claseRiesgo = RIESGO_CLASE[b.riesgoViento] || "";
   return `
-    <div class="b6-fila ${claseRiesgo}">
-      <div class="b6-hora">${esc(b.etiqueta)}</div>
-      <div class="b6-icono">${iconoTiempo(b.cielo, b.precip, b.intensidad)}</div>
-      <div class="b6-col">${esc(b.nubesRaw) || "—"}</div>
-      <div class="b6-col">${esc(b.visibilidadRaw) || "—"}</div>
-      <div class="b6-col b6-viento-col">
+    <tr class="b6-fila ${claseRiesgo}">
+      <td class="b6-hora">${esc(b.etiqueta)}</td>
+      <td class="b6-icono">${iconoTiempo(b.cielo, b.precip, b.intensidad)}</td>
+      <td class="b6-col">${esc(b.nubesRaw) || "—"}</td>
+      <td class="b6-col">${esc(b.visibilidadRaw) || "—"}</td>
+      <td class="b6-col b6-viento-col">
         <span class="rd-flecha">${flechaViento(vientoDir(b.vientoRaw))}</span>
         ${esc(b.vientoRaw) || "—"}
-      </div>
-      <div class="b6-col t-aire">${esc(b.tempRaw) || "—"}</div>
-      <div class="b6-col t-sens">${esc(b.sensacionRaw) || "—"}</div>
-    </div>`;
+      </td>
+      <td class="b6-col t-aire">${esc(b.tempRaw) || "—"}</td>
+      <td class="b6-col t-sens">${esc(b.sensacionRaw) || "—"}</td>
+    </tr>`;
 }
 
 // Extrae solo la dirección textual del viento crudo para la flecha.
@@ -115,10 +115,16 @@ export function construirResumen(filas, diaSeleccionado) {
             📊 Ver detalle por hora
           </button>
         </div>
-        <div class="b6-header">
-          <div>Horario</div><div></div><div>Nubes</div><div>Visibilidad</div><div>Viento</div><div>Temp</div><div>Sensación</div>
+        <div class="b6-scroll">
+          <table class="b6-tabla">
+            <thead>
+              <tr class="b6-header">
+                <th>Horario</th><th></th><th>Nubes</th><th>Visibilidad</th><th>Viento</th><th>Temp</th><th>Sensación</th>
+              </tr>
+            </thead>
+            <tbody>${bloques}</tbody>
+          </table>
         </div>
-        ${bloques}
         <div class="b6-modelos">
           Elaboración propia sobre modelos <b>${esc(getModelRunInfo().runModelo)}</b>
           · corrida ${esc(getModelRunInfo().runHoraUTC)} UTC

@@ -1020,3 +1020,71 @@ header {
     border-radius: 12px !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   DETALLE CADA 3 HORAS — estructura de tabla con scroll
+   El grid apilado de móvil ocultaba la cabecera y dejaba las
+   columnas sin rótulo. Se replica el patrón de la meteotabla.
+   ════════════════════════════════════════════════════════════════ */
+.b6-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+}
+.b6-tabla {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  width: 100%;
+  min-width: 640px;          /* fuerza el desborde en pantalla chica */
+}
+.b6-tabla thead th {
+  font-size: 0.66rem; font-weight: 900; color: var(--text-muted, #64748b);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 0 10px 8px; text-align: left; white-space: nowrap;
+  border-bottom: 2px solid #edf2f7;
+}
+.b6-tabla .b6-fila td {
+  padding: 12px 10px; vertical-align: middle; white-space: nowrap;
+}
+.b6-tabla .b6-fila td:first-child { border-radius: 10px 0 0 10px; }
+.b6-tabla .b6-fila td:last-child  { border-radius: 0 10px 10px 0; }
+.b6-tabla .b6-hora { font-weight: 900; font-size: 0.8rem; }
+.b6-tabla .b6-icono { width: 42px; }
+.b6-tabla .b6-icono svg { width: 34px; height: 34px; }
+
+.b6-scroll::-webkit-scrollbar { height: 6px; }
+.b6-scroll::-webkit-scrollbar-thumb { background: #9fb2c6; border-radius: 3px; }
+.b6-scroll::-webkit-scrollbar-track { background: #edf2f7; border-radius: 3px; }
+
+/* Anula el grid anterior, que ya no aplica. */
+.b6-fila, .b6-header {
+  display: table-row !important;
+  grid-template-columns: unset !important;
+  grid-template-areas: unset !important;
+}
+
+/* ── Tarjetas de día con altura uniforme ──
+   Las celdas de tabla no igualan alturas: cuando falta la etiqueta
+   de fenómeno, la tarjeta queda más baja. Se estira al alto de fila. */
+.resumen-tabla { height: 1px; }          /* habilita height:100% en td */
+.rd-celda { height: 100%; }
+.resumen-dia {
+  height: 100%;
+  justify-content: flex-start;
+}
+
+@media (max-width: 768px) {
+  .b6-tabla { min-width: 600px; }
+  .b6-tabla thead th { font-size: 0.6rem; padding: 0 8px 6px; }
+  .b6-tabla .b6-fila td { padding: 10px 8px; font-size: 0.78rem; }
+  .b6-scroll { touch-action: pan-x; }
+}
+
+/* Neutraliza asignaciones de grid-area residuales del layout anterior. */
+@media (max-width: 768px) {
+  .b6-col, .b6-hora, .b6-icono {
+    grid-area: unset !important;
+    display: table-cell !important;
+  }
+}
