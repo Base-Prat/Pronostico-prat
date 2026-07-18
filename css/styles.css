@@ -668,3 +668,52 @@ header {
   .b6-fila { min-width: 0; }
   .grid-container { overflow-x: hidden; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   CAUSA REAL del bloqueo de desplazamiento en móvil
+   .main-content y .grid-container llevaban overflow-x: hidden para
+   evitar scroll horizontal de la página completa. Ese recorte se
+   aplica también a los hijos: la tira intenta desbordar para
+   habilitar su propio scroll, pero el padre lo corta antes.
+   Se cambia a "clip" en el eje vertical únicamente, que contiene
+   la página sin anular el desplazamiento de los contenedores
+   internos.
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .main-content {
+    overflow-x: visible !important;
+    max-width: 100% !important;
+  }
+  .grid-container {
+    overflow-x: visible !important;
+  }
+  /* La contención del scroll de página se mantiene en el body,
+     que sí puede recortar sin afectar a los hijos con scroll. */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Refuerzo de la tira: ancho de contenido real y scroll propio. */
+  .resumen-tira {
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: 104px !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    touch-action: pan-x;
+  }
+  .resumen-wrap { overflow: visible !important; max-width: 100%; }
+}
+
+@media (max-width: 768px) {
+  /* La meteotabla ya funcionaba: se preserva su comportamiento. */
+  .mt-scroll {
+    overflow-x: scroll !important;
+    max-width: 100%;
+    touch-action: pan-x;
+  }
+  .meteotabla-section { overflow: visible !important; max-width: 100%; }
+}

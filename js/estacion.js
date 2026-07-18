@@ -3,10 +3,10 @@
 //  Fuente: Open-Meteo (datos abiertos).
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG } from "./config.js?v=20260718074252";
+import { CONFIG } from "./config.js?v=20260718075552";
 import {
   gradosARumbo, windChill, colorUV, fetchConTimeout,
-} from "./utils.js?v=20260718074252";
+} from "./utils.js?v=20260718075552";
 
 const OPEN_METEO_CURRENT =
   `https://api.open-meteo.com/v1/forecast?latitude=${CONFIG.estacion.lat}` +

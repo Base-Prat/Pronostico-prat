@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260718074252";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718074252";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718074252";
+import { esc, getModelRunInfo } from "./utils.js?v=20260718075552";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718075552";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718075552";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
