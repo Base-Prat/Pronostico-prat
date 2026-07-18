@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260718075552";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718075552";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718075552";
+import { esc, getModelRunInfo } from "./utils.js?v=20260718080056";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260718080056";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260718080056";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
@@ -100,7 +100,11 @@ export function construirResumen(filas, diaSeleccionado) {
 
   const html = `
     <div class="resumen-wrap">
-      <div class="resumen-tira" id="resumen-tira">${tira}</div>
+      <div class="resumen-tira-cont">
+        <button class="tira-nav tira-nav-izq" id="tira-izq" aria-label="Días anteriores">‹</button>
+        <div class="resumen-tira" id="resumen-tira">${tira}</div>
+        <button class="tira-nav tira-nav-der" id="tira-der" aria-label="Días siguientes">›</button>
+      </div>
 
       <div class="b6-panel">
         <div class="b6-titulo">

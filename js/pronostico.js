@@ -3,10 +3,10 @@
 //  tarjetas por día y abre el detalle horario (Open-Meteo).
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG, getCSVUrl } from "./config.js?v=20260718075552";
-import { esc } from "./utils.js?v=20260718075552";
-import { abrirDetalleHorario } from "./graficos.js?v=20260718075552";
-import { construirResumen } from "./vista-resumen.js?v=20260718075552";
+import { CONFIG, getCSVUrl } from "./config.js?v=20260718080056";
+import { esc } from "./utils.js?v=20260718080056";
+import { abrirDetalleHorario } from "./graficos.js?v=20260718080056";
+import { construirResumen } from "./vista-resumen.js?v=20260718080056";
 
 let sectorActivo = null;
 let filasPronostico = [];
@@ -52,6 +52,29 @@ function renderResumen(diaSeleccionado) {
   grid().querySelectorAll(".resumen-dia").forEach((btn) => {
     btn.addEventListener("click", () => renderResumen(btn.dataset.dia));
   });
+
+  // Botones de desplazamiento de la tira. En móvil el gesto táctil
+  // puede quedar capturado por otros elementos, así que se ofrece
+  // navegación explícita por toque.
+  const tira = grid().querySelector("#resumen-tira");
+  const desplazar = (dir) => {
+    if (!tira) return;
+    tira.scrollBy({ left: dir * Math.max(tira.clientWidth * 0.7, 110), behavior: "smooth" });
+  };
+  grid().querySelector("#tira-izq")?.addEventListener("click", () => desplazar(-1));
+  grid().querySelector("#tira-der")?.addEventListener("click", () => desplazar(1));
+
+  // Oculta las flechas cuando no hay nada más que mostrar en ese lado.
+  const actualizarFlechas = () => {
+    if (!tira) return;
+    const izq = grid().querySelector("#tira-izq");
+    const der = grid().querySelector("#tira-der");
+    const max = tira.scrollWidth - tira.clientWidth;
+    if (izq) izq.style.visibility = tira.scrollLeft > 4 ? "visible" : "hidden";
+    if (der) der.style.visibility = tira.scrollLeft < max - 4 ? "visible" : "hidden";
+  };
+  tira?.addEventListener("scroll", actualizarFlechas);
+  actualizarFlechas();
 
   // Enlace al detalle por hora (modal con gráficos, Open-Meteo).
   grid().querySelector("#btn-horario")?.addEventListener("click", (ev) => {

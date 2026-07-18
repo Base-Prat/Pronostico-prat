@@ -717,3 +717,78 @@ header {
   }
   .meteotabla-section { overflow: visible !important; max-width: 100%; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   MÓVIL — banner de métricas y desplazamiento táctil
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Banner: las métricas se encimaban porque iban en una sola
+     línea (nowrap) junto al semáforo. Se apilan y se permite el
+     salto de línea. ── */
+  .header-lower {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .current-metrics {
+    flex-wrap: wrap !important;
+    justify-content: center;
+    gap: 10px 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    align-self: stretch !important;
+    padding: 10px 12px !important;
+  }
+  .metric-item { flex: 0 0 auto; }
+  .ops-traffic-light {
+    width: 100%;
+    max-width: 100% !important;
+    justify-content: center;
+    align-self: stretch !important;
+  }
+
+  /* ── Widget de la calculadora: colapsado tapaba el contenido y
+     capturaba el gesto del dedo sobre la tira. Se reduce y se
+     ancla en una esquina sin bloquear el resto. ── */
+  .wc-widget.collapsed {
+    width: 46px !important;
+    height: 46px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    left: auto !important;
+  }
+  .wc-widget.collapsed .wc-head { padding: 11px !important; }
+
+  /* ── Tira de días: se asegura el gesto horizontal ── */
+  .resumen-tira {
+    touch-action: pan-x !important;
+    overscroll-behavior-x: contain;
+  }
+  .resumen-dia { touch-action: manipulation; }
+
+  .mt-scroll {
+    touch-action: pan-x !important;
+    overscroll-behavior-x: contain;
+  }
+}
+
+/* ── Botones de navegación de la tira de días ── */
+.resumen-tira-cont { position: relative; }
+.tira-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 5; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.96); color: var(--navy, #1a2a44);
+  border: 1px solid #cfd8e3; box-shadow: 0 3px 12px rgba(0,0,0,0.18);
+  font-size: 1.4rem; font-weight: 900; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  padding: 0 0 3px 0;
+}
+.tira-nav:active { background: #edf2f7; }
+.tira-nav-izq { left: -4px; }
+.tira-nav-der { right: -4px; }
+
+@media (min-width: 769px) {
+  /* En escritorio las flechas solo aparecen si hacen falta. */
+  .tira-nav { width: 30px; height: 30px; font-size: 1.2rem; }
+}
