@@ -1,767 +1,167 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <title>Base Prat | Sistema Meteorológico Autónomo</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --navy: #1a3a5a; --bg: #f4f7f9;
-            --color-bajo: #92d050;    --bg-bajo: #f2f9ec;
-            --color-mod: #ffc000;      --bg-mod: #fff9e6;
-            --color-alto: #ed7d31;    --bg-alto: #fff2e6;
-            --color-peligro: #ff0000;  --bg-peligro: #ffe6e6;
-            --twitter-blue: #1DA1F2;
-        }
-        * { box-sizing: border-box; }
-        body { font-family: 'Roboto', sans-serif; background: var(--navy); margin: 0; display: flex; height: 100vh; overflow-x: hidden; }
-        .sidebar { width: 260px; min-width: 260px; background: var(--navy); color: white; display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 10; min-height: 100vh; }
-        .sidebar .logo-container { width: 100%; text-align: center; margin-bottom: 15px; }
-        .sidebar img { width: 120px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0px 6px 8px rgba(0,0,0,0.4)); }
-        .sidebar h2 { font-size: 0.8rem; text-align: center; text-transform: uppercase; margin: 0 0 20px 0; line-height: 1.4; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 15px; color: #ecf0f1; }
-        .sidebar-nav { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
-        .sidebar-nav-title { font-size: 0.65rem; font-weight: 900; color: #3498db; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .external-link { color: #bdc3c7; text-decoration: none; font-size: 0.8rem; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .external-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
-        .risk-legend { background: white; color: #1a3a5a; padding: 15px; border-radius: 10px; font-size: 0.75rem; margin-top: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .risk-legend h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: var(--navy); border-bottom: 2px solid var(--navy); padding-bottom: 6px; font-weight: 900; }
-        .legend-item { display: flex; justify-content: space-between; margin-bottom: 6px; padding: 3px 0; }
-        .l-bajo { color: var(--color-bajo); font-weight: 700; } .l-mod { color: var(--color-mod); font-weight: 700; } .l-alto { color: var(--color-alto); font-weight: 700; } .l-peli { color: #ff5555; font-weight: 700; }
-        .main-content { flex: 1; min-width: 0; max-width: 100%; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; position: relative; background: var(--bg); }
-        header { background: linear-gradient(to top, rgba(244,247,249,1) 0%, rgba(244,247,249,0.2) 40%, rgba(0,0,0,0.1) 100%); background-size: cover; min-height: 450px; padding: 0; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; overflow: hidden; }
-        .location-title-wrap { text-align: center; width: 100%; background: rgba(0,0,0,0.25); padding: 20px 30px; border-radius: 16px; backdrop-filter: blur(4px); display: inline-block; }
-        .location-title { font-size: 4.2rem; font-weight: 900; color: #ffffff; margin: 0; letter-spacing: -1.5px; text-shadow: 0 3px 12px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,1); line-height: 1.1; }
-        .location-subtitle { font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-top: 10px; text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.7), 0 1px 2px rgba(0,0,0,1); letter-spacing: 2px; text-transform: uppercase; }
-        /* Badge area oceanica */
-        .badge-oceanico { display: inline-flex; align-items: center; gap: 5px; background: rgba(52,152,219,0.85); color: white; font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(6px); }
-        .current-metrics { display: flex; gap: 18px; align-items: center; max-width: 100%; flex-wrap: wrap; background: rgba(255,255,255,0.92); padding: 12px 25px; border-radius: 40px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,1); box-shadow: 0 8px 32px rgba(0,0,0,0.25); align-self: flex-start; }
-        .metric-item { display: flex; flex-direction: column; line-height: 1.1; }
-        .metric-val { font-size: 1.2rem; font-weight: 900; color: #1a1a1a; display: flex; align-items: center; gap: 8px; }
-        .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; font-weight: 800; }
-        .sep { color: rgba(0,0,0,0.15); font-size: 1.5rem; }
-        .dot { height:12px; width:12px; border-radius:50%; display:inline-block; background:#ccc; border: 1px solid rgba(0,0,0,0.12); flex-shrink: 0; }
-        .astro-bar { background: white; padding: 15px 45px; display: flex; gap: 40px; border-bottom: 1px solid #edf2f7; flex-wrap: wrap; }
-        .astro-item { display: flex; flex-direction: column; }
-        .astro-item label { font-size: 0.6rem; color: #a0aec0; font-weight: 900; text-transform: uppercase; }
-        .astro-item span { font-size: 0.95rem; color: #2d3748; font-weight: 700; }
-        .days-nav { padding: 25px 45px 15px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .day-tab { padding: 10px 22px; border-radius: 10px; cursor: pointer; background: white; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
-        .day-tab.active { background: var(--navy); color: white; border-color: var(--navy); box-shadow: 0 4px 12px rgba(26,58,90,0.2); }
-        .grid-container { padding: 0 45px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { border-radius: 15px; padding: 22px; border-top: 10px solid #cbd5e0; box-shadow: 0 6px 15px rgba(0,0,0,0.07); transition: 0.3s; display: flex; flex-direction: column; cursor: pointer; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; min-height: 35px; flex-wrap: wrap; gap: 8px; }
-        .card-header h3 { margin: 0; font-size: 1.2rem; color: var(--navy); font-weight: 900; }
-        .risk-tag { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 900; color: #1a1a1a; border: 1px solid rgba(0,0,0,0.1); }
-        .data-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 0.9rem; }
-        .data-row span { font-weight: 700; color: #718096; width: 110px; flex-shrink: 0; }
-        .data-row b { margin-left: auto; color: #2d3748; text-align: right; }
-        .data-row.mar-oceanica b { font-size: 0.78rem; max-width: 200px; line-height: 1.4; }
-        .temp-box { display: flex; margin-top: 15px; gap: 10px; margin-bottom: 15px; }
-        .temp-item { flex: 1; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid rgba(0,0,0,0.05); min-width: 0; }
-        .temp-item small { display: block; font-size: 0.6rem; color: #718096; font-weight: 800; margin-bottom: 4px; }
-        .temp-item div { font-weight: 900; font-size: 1.2rem; }
-        .btn-full-day { grid-column: 1/-1; background: var(--navy); color: white; padding: 18px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; margin-top: 10px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn-full-day:hover { transform: translateY(-2px); filter: brightness(1.2); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
-        .card-bajo { border-top-color: var(--color-bajo); background-color: var(--bg-bajo); }
-        .card-mod { border-top-color: var(--color-mod); background-color: var(--bg-mod); }
-        .card-alto { border-top-color: var(--color-alto); background-color: var(--bg-alto); animation: pulse-orange 2.5s infinite; }
-        .card-peligro { border-top-color: var(--color-peligro); background-color: var(--bg-peligro); animation: pulse-red 1.5s infinite; }
-        @keyframes titilar { 0%{opacity:1}50%{opacity:0.7;transform:scale(1.01)}100%{opacity:1} }
-        .card-titilar { animation: titilar 1s infinite ease-in-out !important; }
-        @keyframes pulse-orange { 0%{box-shadow:0 0 0 0 rgba(237,125,49,0.4)}70%{box-shadow:0 0 0 12px rgba(237,125,49,0)} }
-        @keyframes pulse-red { 0%{box-shadow:0 0 0 0 rgba(255,0,0,0.5)}70%{box-shadow:0 0 0 15px rgba(255,0,0,0)} }
-        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 2% auto; padding: 30px; border-radius: 20px; width: 95%; max-width: 1400px; max-height: 90vh; overflow-y: auto; }
-        .charts-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; margin-bottom: 30px; }
-        .chart-box { background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; height: 230px; }
-        .footer-section { background: white; padding: 40px 45px; border-top: 1px solid #e2e8f0; text-align: center; }
-        .footer-section h2 { color: var(--navy); font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
-        .row-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 25px; }
-        .btn-interest { padding: 10px 20px; border: 1px solid #cbd5e0; border-radius: 8px; text-decoration: none; color: var(--navy); font-weight: 700; font-size: 0.75rem; transition: 0.3s; }
-        .btn-social { padding: 8px 18px; border: 1px solid var(--twitter-blue); border-radius: 20px; text-decoration: none; color: var(--twitter-blue); font-weight: 800; font-size: 0.7rem; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
-        .btn-social:hover { background: var(--twitter-blue); color: white; transform: scale(1.05); }
-        .credits-bar { background: var(--navy); color: white; padding: 40px 20px; text-align: center; }
-        .credits-bar h3 { margin: 5px 0; font-size: 1.6rem; font-weight: 900; }
-        .hamburger-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 9999; background: var(--navy); border: none; border-radius: 10px; padding: 10px 12px; cursor: pointer; flex-direction: column; gap: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .hamburger-btn span { display: block; width: 22px; height: 2.5px; background: white; border-radius: 2px; transition: 0.3s; }
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; }
-        .btn-ver-web { display: none; width: 100%; background: var(--navy); color: white; border: none; padding: 10px; font-size: 0.8rem; font-weight: 700; text-align: center; cursor: pointer; letter-spacing: 0.5px; z-index: 100; }
-        /* Separadores de grupos en la barra de sectores */
-        .sector-group-label { font-size: 0.6rem; font-weight: 900; color: #3498db; text-transform: uppercase; letter-spacing: 1.5px; padding: 4px 8px; align-self: center; white-space: nowrap; flex-shrink: 0; opacity: 0.9; }
-        .sector-group-sep { width: 1px; height: 28px; background: rgba(26,58,90,0.2); align-self: center; flex-shrink: 0; margin: 0 4px; }
-        @media (max-width: 768px) {
-            html,body{width:100%;overflow-x:hidden}
-            body{min-width:0!important;overflow-x:hidden;flex-direction:column;height:auto;width:100%}
-            .sidebar{position:fixed;top:0;left:-280px;width:260px;min-width:unset;height:100%;z-index:999;transition:left 0.3s ease;overflow-y:auto;min-height:unset}
-            .sidebar.open{left:0}.sidebar-overlay.active{display:block}.hamburger-btn{display:flex}.btn-ver-web{display:block}
-            .main-content{min-width:0!important;width:100%;max-width:100vw;overflow-x:hidden}
-            header{min-height:220px;width:100%}.header-inner{padding:55px 16px 16px!important}
-            .location-title{font-size:1.4rem;letter-spacing:-0.5px}.location-subtitle{font-size:0.65rem;letter-spacing:0.5px}.location-title-wrap{padding:10px 12px}
-            .current-metrics{width:auto;max-width:calc(100vw - 32px);flex-wrap:wrap;gap:6px;padding:8px 12px;border-radius:12px}
-            .metric-val{font-size:0.8rem}.metric-label{font-size:0.5rem}.sep{display:none}
-            #ops-traffic-light{flex-wrap:wrap;border-radius:12px;padding:6px 12px;gap:6px;font-size:0.65rem;max-width:calc(100vw - 32px)}
-            .astro-bar{padding:8px 12px;gap:10px;flex-wrap:wrap;width:100%}.astro-item label{font-size:0.5rem}.astro-item span{font-size:0.7rem}
-            #sector-tabs{padding:8px 12px 0!important;gap:5px!important;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap!important;width:100%;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-            #sector-tabs::-webkit-scrollbar{display:none}
-            .sector-group-label{display:none}.sector-group-sep{display:none}
-            .days-nav{padding:8px 12px 6px;gap:5px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;width:100%;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-            .days-nav::-webkit-scrollbar{display:none}.day-tab{padding:6px 12px;font-size:0.7rem;white-space:nowrap;flex-shrink:0}
-            .grid-container{padding:0 12px 20px;grid-template-columns:1fr;gap:10px;width:100%}
-            .card{padding:12px;border-top-width:6px;border-radius:10px;width:100%}.card-header{margin-bottom:10px;min-height:unset}
-            .card-header h3{font-size:0.85rem}.risk-tag{font-size:0.65rem;padding:3px 8px}.data-row{font-size:0.75rem;padding:5px 0}.data-row span{width:80px;font-size:0.7rem}
-            .temp-box{margin-top:8px;margin-bottom:8px;gap:6px}.temp-item{padding:6px;border-radius:8px}.temp-item small{font-size:0.5rem}.temp-item div{font-size:0.95rem}
-            .btn-full-day{font-size:0.8rem;padding:12px}.footer-section{padding:20px 12px}.footer-section h2{font-size:1rem}.btn-interest{font-size:0.65rem;padding:7px 12px}
-            .credits-bar{padding:20px 12px}.credits-bar h3{font-size:1rem}
-            #prat-wc{width:calc(100vw - 40px)!important;right:10px!important;bottom:10px!important}
-            .modal-content{margin:0;border-radius:0;padding:12px;max-height:100vh}.charts-grid{grid-template-columns:1fr}
-        }
-        @media (min-width:769px) and (max-width:1024px) {
-            body{min-width:0}.sidebar{width:220px;min-width:220px;padding:15px}.location-title{font-size:2.8rem}
-            .grid-container{padding:0 20px 30px}.astro-bar{padding:15px 20px;gap:20px}.days-nav{padding:15px 20px 10px}
-        }
-        @media (min-width:1025px) { body{min-width:960px;overflow-x:auto} .main-content{min-width:700px} }
-    </style>
-<base target="_blank">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="description" content="Sistema meteorológico de apoyo para sectores antárticos y Paso Drake." />
+  <title>Sistema Meteorológico Antártico | Apoyo a la decisión</title>
+
+  <!-- Librerías externas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/widget.css" />
+  <base target="_blank" />
 </head>
 <body>
 
-<button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()">
+  <button class="hamburger-btn" id="hamburger-btn" aria-label="Abrir menú">
     <span></span><span></span><span></span>
-</button>
-<button class="btn-ver-web" onclick="verVersionWeb()">🖥️ Ver versión escritorio</button>
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  </button>
+  <button class="btn-ver-web">🖥️ Ver versión escritorio</button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-<aside class="sidebar" id="sidebar">
-    <div class="logo-container"><img src="https://base-prat.github.io/Pronostico-prat/ESCUDO.png" alt="Escudo"></div>
-    <h2>Base Naval Antártica Chilena<br>"Capitán Arturo Prat"</h2>
-    <nav class="sidebar-nav">
-        <div class="sidebar-nav-title">GLACIOLÓGICO Y CARTAS</div>
-        <a href="https://meteoarmada.directemar.cl/meteo/monitoreo-de-hielos/reporte-base-antarticas" target="_blank" class="external-link"> INFORME GLACIOLÓGICO</a>
-        <a href="http://triton.directemar.cl/web/meteograma_A_BASEPRAT_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA CAPITÁN ARTURO PRAT</a>
-        <a href="http://triton.directemar.cl/web/meteograma_A_FILDES_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA BAHÍA FILDES</a>
-        <a href="http://triton.directemar.cl/web/meteograma_A_BAHIAPARAISO_Antartica_d02.png" target="_blank" class="external-link"> METEOGRAMA BAHÍA PARAÍSO</a>
-        <a href="http://triton.directemar.cl/web/html/Vto-color-antar2.html" target="_blank" class="external-link"> CARTA DE VIENTO ANTÁRTICA</a>
-        <a href="http://triton.directemar.cl/web/html/Vto-color-antar2.html" target="_blank" class="external-link"> CARTA DE PRECIPITACIÓN ANTÁRTICA</a>
-        <a href="https://web.directemar.cl/met/jturno/pub/GFS/animacion_foto.gif" target="_blank" class="external-link"> IMAGEN SATELITAL</a>
-        <a href="https://meteoarmada.directemar.cl/meteo/modelos-numericos/cartas-de-superficie-pronosticadas" target="_blank" class="external-link"> CARTA PRONOSTICADA</a>
-        <a href="https://web.directemar.cl/met/jturno/pub/Cvtodrake.html" target="_blank" class="external-link"> CARTA DE VIENTO PASO DRAKE</a>
-        <a href="https://web.directemar.cl/met/jturno/pub/Oladrake.html" target="_blank" class="external-link"> CARTA DE OLAS PASO DRAKE</a>
-        <a href="https://www.shoa.cl/php/mareas?idioma=es" target="_blank" class="external-link"> TABLA DE MAREAS</a>
-    </nav>
-    <div class="risk-legend">
-        <h4>Referencia Viento (Sost.)</h4>
-        <div class="legend-item"><span class="l-bajo">● Bajo:</span> <span>1 - 15 kts</span></div>
-        <div class="legend-item"><span class="l-mod">● Moderado:</span> <span>16 - 20 kts</span></div>
-        <div class="legend-item"><span class="l-alto">● Alto:</span> <span>21 - 25 kts</span></div>
-        <div class="legend-item"><span class="l-peli">● Peligro:</span> <span>30+ kts</span></div>
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-container">
+      <!-- Logo del proyecto. Coloca tu archivo en assets/logo.png -->
+      <img src="assets/logo.png" alt="Logo del proyecto meteorológico" />
     </div>
-</aside>
+    <h2>Sistema Meteorológico Antártico</h2>
 
-<main class="main-content">
-    <header id="main-header">
-        <div id="header-bg-img" style="position:absolute;top:0;left:0;width:100%;height:100%;background:url('https://base-prat.github.io/Pronostico-prat/fondo.jpg') center 30%/cover no-repeat;z-index:0;transition:background 0.5s ease;"></div>
-        <div id="header-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.15) 50%,rgba(0,0,0,0.45) 100%);z-index:1;pointer-events:none;"></div>
-        <div class="header-inner" style="position:relative;z-index:2;display:flex;flex-direction:column;justify-content:space-between;height:100%;padding:45px;">
-            <div class="location-title-wrap">
-                <h1 class="location-title" id="location-title">Bahía Chile - Puerto Soberanía</h1>
-                <div class="location-subtitle" id="location-subtitle">Base Naval Antártica Capitán Arturo Prat</div>
-                <div id="badge-oceanico" class="badge-oceanico" style="display:none;"></div>
-            </div>
-            <div style="display:flex;gap:15px;flex-wrap:wrap;max-width:100%;">
-                <div class="current-metrics" id="header-metrics">Sincronizando con estación...</div>
-                <div id="ops-traffic-light" style="display:flex;gap:10px;background:rgba(255,255,255,0.85);padding:8px 20px;border-radius:40px;backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,1);box-shadow:0 8px 32px rgba(0,0,0,0.15);align-items:center;flex-wrap:wrap;">
-                    <span style="font-size:0.65rem;font-weight:900;color:#1a3a5a;text-transform:uppercase;">Estado Ops:</span>
-                    <div id="light-botes" style="display:flex;align-items:center;gap:5px;font-size:0.7rem;font-weight:800;"><span class="dot"></span> BOTES</div>
-                    <div id="light-vuelo" style="display:flex;align-items:center;gap:5px;font-size:0.7rem;font-weight:800;"><span class="dot"></span> VUELO</div>
-                    <div id="light-exterior" style="display:flex;align-items:center;gap:5px;font-size:0.7rem;font-weight:800;"><span class="dot"></span> EXTERIOR</div>
-                </div>
-            </div>
+    <nav class="sidebar-nav" aria-label="Fuentes externas">
+      <div class="sidebar-nav-title">Fuentes oficiales y cartas</div>
+      <div id="sidebar-links"></div>
+    </nav>
+
+    <div class="risk-legend">
+      <h4>Referencia viento (sost.)</h4>
+      <div class="legend-item"><span class="l-bajo">● Bajo:</span><span>1 - 15 kts</span></div>
+      <div class="legend-item"><span class="l-mod">● Moderado:</span><span>16 - 20 kts</span></div>
+      <div class="legend-item"><span class="l-alto">● Alto:</span><span>21 - 25 kts</span></div>
+      <div class="legend-item"><span class="l-peli">● Peligro:</span><span>30+ kts</span></div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main-content">
+    <header>
+      <div class="header-bg-img" id="header-bg-img"></div>
+      <div class="header-overlay"></div>
+      <div class="header-inner">
+        <div class="location-title-wrap">
+          <h1 class="location-title" id="location-title">Bahía Chile - Puerto Soberanía</h1>
+          <div class="location-subtitle" id="location-subtitle">Base Naval Antártica Capitán Arturo Prat</div>
+          <div class="badge-oceanico" id="badge-oceanico" style="display:none"></div>
         </div>
+        <div class="header-lower">
+          <div class="current-metrics" id="header-metrics">Sincronizando con estación…</div>
+          <div class="ops-traffic-light">
+            <span class="ops-title">Estado ops:</span>
+            <div class="ops-light" id="light-botes"><span class="dot"></span> BOTES</div>
+            <div class="ops-light" id="light-vuelo"><span class="dot"></span> VUELO</div>
+            <div class="ops-light" id="light-exterior"><span class="dot"></span> EXTERIOR</div>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <section class="astro-bar">
-        <div class="astro-item"><label>🌅 Amanecer</label><span>05:31</span></div>
-        <div class="astro-item"><label>🌇 Puesta de Sol</label><span>20:50</span></div>
-        <div class="astro-item"><label>⌚ Hora Local</label><span id="clock">--:--:--</span></div>
-        <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
-        <div class="astro-item"><label>📅 Fecha Actualización</label><span id="current-date">--/--/----</span></div>
-        <div class="astro-item"><label>🔄 Última Corrida</label><span id="last-run">--:-- UTC | --</span></div>
+    <section class="astro-bar" aria-label="Datos astronómicos y de actualización">
+      <div class="astro-item"><label>🌅 Amanecer</label><span>05:31</span></div>
+      <div class="astro-item"><label>🌇 Puesta de sol</label><span>20:50</span></div>
+      <div class="astro-item"><label>⌚ Hora local</label><span id="clock">--:--:--</span></div>
+      <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
+      <div class="astro-item"><label>📅 Actualización</label><span id="current-date">--/--/----</span></div>
+      <div class="astro-item"><label>🔄 Última corrida</label><span id="last-run">--:-- UTC | --</span></div>
     </section>
 
-    <nav id="sector-tabs" style="display:flex;gap:10px;padding:20px 45px 0;flex-wrap:wrap;align-items:center;"></nav>
-    <nav id="days-nav" class="days-nav"></nav>
+    <nav class="sector-tabs" id="sector-tabs" aria-label="Sectores"></nav>
+    <nav class="days-nav" id="days-nav" aria-label="Días"></nav>
     <section class="grid-container" id="grid-pronostico"></section>
 
-    <section class="footer-section">
-        <h2>Sitios de Interés</h2>
-        <div class="row-container">
-            <a href="https://www.armada.cl/" target="_blank" class="btn-interest">ARMADA DE CHILE</a>
-            <a href="https://www.directemar.cl" target="_blank" class="btn-interest">DIRECTEMAR</a>
-            <a href="https://meteoarmada.directemar.cl/" target="_blank" class="btn-interest">SERVICIO METEOROLÓGICO</a>
-            <a href="https://www.sismologia.cl/" target="_blank" class="btn-interest">SISMOLOGÍA</a>
-            <a href="https://www.horaoficial.cl/" target="_blank" class="btn-interest">HORA OFICIAL</a>
-        </div>
-        <h2 style="font-size:1rem;color:#718096;">Redes Sociales X (Twitter)</h2>
-        <div class="row-container">
-            <a href="https://x.com/Armada_Chile" target="_blank" class="btn-social">@Armada_Chile</a>
-            <a href="https://x.com/DIRECTEMAR_CHILE" target="_blank" class="btn-social">@DIRECTEMAR_CHILE</a>
-            <a href="https://x.com/Servimet_Armada" target="_blank" class="btn-social">@Servimet_Armada</a>
-            <a href="https://x.com/metarmada_mag" target="_blank" class="btn-social">@metarmada_mag</a>
-            <a href="https://x.com/metarmada_valp" target="_blank" class="btn-social">@metarmada_valp</a>
-        </div>
+    <section class="meteotabla-section" aria-label="Meteotabla de pronóstico">
+      <h2 class="mt-titulo">Meteotabla — pronóstico horario</h2>
+      <div id="meteotabla"></div>
     </section>
+
+    <section class="footer-section">
+      <h2>Sitios de interés</h2>
+      <div class="row-container">
+        <a href="https://www.armada.cl/" class="btn-interest">Armada de Chile</a>
+        <a href="https://www.directemar.cl" class="btn-interest">DIRECTEMAR</a>
+        <a href="https://meteoarmada.directemar.cl/" class="btn-interest">Servicio Meteorológico</a>
+        <a href="https://www.sismologia.cl/" class="btn-interest">Sismología</a>
+        <a href="https://www.horaoficial.cl/" class="btn-interest">Hora oficial</a>
+      </div>
+      <h2 class="sub">Redes sociales (X)</h2>
+      <div class="row-container">
+        <a href="https://x.com/Armada_Chile" class="btn-social">@Armada_Chile</a>
+        <a href="https://x.com/DIRECTEMAR_CHILE" class="btn-social">@DIRECTEMAR_CHILE</a>
+        <a href="https://x.com/Servimet_Armada" class="btn-social">@Servimet_Armada</a>
+        <a href="https://x.com/metarmada_mag" class="btn-social">@metarmada_mag</a>
+        <a href="https://x.com/metarmada_valp" class="btn-social">@metarmada_valp</a>
+      </div>
+    </section>
+
     <footer class="credits-bar">
-        <p>© 2026 Todos los derechos reservados.</p>
-        <h3>Angelo Campos Rivera</h3>
-        <a href="https://instagram.com/angelo_meteo" target="_blank">@angelo_meteo "CamMet"</a>
+      <p>© 2026</p>
+      <p>Meteorología Base Naval Antártica Capitán Arturo Prat</p>
     </footer>
-</main>
+  </main>
 
-<div id="modalDetalle" class="modal">
+  <!-- ── MODAL DETALLE HORARIO ── -->
+  <div id="modalDetalle" class="modal">
     <div class="modal-content">
-        <span style="float:right;cursor:pointer;font-size:2.5rem;font-weight:900;" onclick="cerrarModal()">&times;</span>
-        <h2 id="modalTitle" style="color:var(--navy);margin-top:0;">Evolución del Tiempo por Hora</h2>
-        <div class="charts-grid">
-            <div class="chart-box"><canvas id="chartViento"></canvas></div>
-            <div class="chart-box"><canvas id="chartTemp"></canvas></div>
-            <div class="chart-box"><canvas id="chartPrec"></canvas></div>
-            <div class="chart-box"><canvas id="chartHum"></canvas></div>
-            <div class="chart-box"><canvas id="chartCloud"></canvas></div>
-            <div class="chart-box"><canvas id="chartPresion"></canvas></div>
-        </div>
-        <table style="width:100%;border-collapse:collapse;text-align:center;font-size:0.85rem;">
-            <thead><tr style="background:var(--navy);color:white;">
-                <th style="padding:10px;">Hora (UTC)</th><th>Viento/Racha (kts)</th>
-                <th>T° Aire/Sensación (°C)</th><th>Prec (mm)</th>
-                <th>Hum (%)</th><th>Nub (%)</th><th>Pres (hPa)</th>
-            </tr></thead>
-            <tbody id="modalBody"></tbody>
-        </table>
+      <span class="modal-close" id="modal-close" aria-label="Cerrar">&times;</span>
+      <h2 class="modal-title" id="modalTitle">Evolución del tiempo por hora</h2>
+      <div class="charts-grid">
+        <div class="chart-box"><canvas id="chartViento"></canvas></div>
+        <div class="chart-box"><canvas id="chartTemp"></canvas></div>
+        <div class="chart-box"><canvas id="chartPrec"></canvas></div>
+        <div class="chart-box"><canvas id="chartHum"></canvas></div>
+        <div class="chart-box"><canvas id="chartCloud"></canvas></div>
+        <div class="chart-box"><canvas id="chartPresion"></canvas></div>
+      </div>
+      <table class="modal-table">
+        <thead>
+          <tr>
+            <th>Hora (UTC)</th><th>Viento/Racha (kts)</th><th>T° Aire/Sens. (°C)</th>
+            <th>Prec (mm)</th><th>Hum (%)</th><th>Nub (%)</th><th>Pres (hPa)</th>
+          </tr>
+        </thead>
+        <tbody id="modalBody"></tbody>
+      </table>
     </div>
-</div>
-
-<script>
-// ════════════════════════════════════════════════════════════════
-// SECTORES — ARRAY PRINCIPAL (actualizado con 6 nuevas ubicaciones)
-// Nota: los sectores nuevos tienen gid:"0" — reemplazar con el GID
-// real de cada hoja en Google Sheets una vez creadas.
-// ════════════════════════════════════════════════════════════════
-const ID_DOCUMENTO = "2PACX-1vQRxJhBvpk3JZu0MWpKPZ2PMi2DYfEjxhSTWMbX4i_EHHI6rh9frJuskRuaX-OXJqc_Akz6Dh5qLr72";
-
-const sectores = [
-  // ── BASES ANTÁRTICAS ──────────────────────────────────────────
-  {
-    nombre: "Bahía Chile - Puerto Soberanía",
-    subtitulo: "Base Naval Antártica Capitán Arturo Prat",
-    gid: "939106272", key: "prat",
-    imagen: "https://base-prat.github.io/Pronostico-prat/fondo.jpg",
-    grupo: "BASES", oceanico: false
-  },
-  {
-    nombre: "Bahía Fildes (Caleta Ardley)",
-    subtitulo: "Gobernación Marítima de la Antártica Chilena",
-    gid: "1678435349", key: "fildes",
-    imagen: "https://images.visitchile.com/destinos/4451_Bahia_Fildes.jpg?w=960&h=448&fit=crop&q=auto&auto=format",
-    grupo: "BASES", oceanico: false
-  },
-  {
-    nombre: "Base O'Higgins",
-    subtitulo: "Base Militar Antártica General Bernardo O'Higgins Riquelme",
-    gid: "1123581909", key: "ohiggins",
-    imagen: "https://www.calacademy.org/sites/default/files/medialibrary/blogs/thelongview/wp-content/uploads/2012/05/bernardo-oe28099higgins-base1041x673.jpg",
-    grupo: "BASES", oceanico: false
-  },
-  {
-    // ── NUEVA: Base Yelcho ─────────────────────────────────────
-    nombre: "Base Yelcho (INACH) - Bahía Sur",
-    subtitulo: "Base Antártica Capitán Luis Óscar Yelcho — Isla Doumer",
-    label: "Base Yelcho",
-    gid: "1631597205", key: "yelcho",
-    imagen: "https://www.inach.cl/wp-content/uploads/2025/02/y3-1024x767.jpg",
-    grupo: "BASES", oceanico: false
-  },
-  {
-    nombre: "Bahía Paraíso",
-    subtitulo: "Base Antártica Presidente Gabriel González Videla",
-    gid: "1517815039", key: "paraiso",
-    imagen: "https://i.ytimg.com/vi/WmlEtmXnD7c/maxresdefault.jpg",
-    grupo: "BASES", oceanico: false
-  },
-  {
-    nombre: "Isla Adelaida - Bahía Margarita",
-    label: "Base Carvajal",
-    subtitulo: "Base Antártica Teniente Luis Carvajal Villarroel",
-    gid: "1183808960", key: "carvajal",
-    imagen: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEid4dvkAJ_6EzVOnO67zfQCW5iqigfiEIdTtSbvqEt062CG-S7PTZjAJLf1vQunRbD8haqc-CZwchwRPXx-B3UQIjxBR0DLPGDOMw8sYnGBdzccmto1YAvr_2LmlgnkX6hQeVI23rTrTOzY/w1200-h630-p-k-no-nu/4g.jpg",
-    grupo: "BASES", oceanico: false
-  },
-
-  // ── PASOS Y ESTRECHOS ─────────────────────────────────────────
-  {
-    nombre: "Estrecho Nelson",
-    subtitulo: "",
-    gid: "942856754", key: "nelson",
-    imagen: "https://cdn.britannica.com/86/189286-050-59B38044/Mountains-sunset-Antarctic-Peninsula-Moon.jpg",
-    grupo: "PASOS", oceanico: false
-  },
-  {
-    nombre: "Estrecho Bransfield",
-    subtitulo: "",
-    gid: "2098562938", key: "bransfield",
-    imagen: "https://wpd.ugr.es/~bravoseis/wp-content/uploads/2017/11/1200px-Bransfield-Strait-860x484.jpg",
-    grupo: "PASOS", oceanico: false
-  },
-  {
-    nombre: "Isla Decepción",
-    subtitulo: "",
-    gid: "1685199890", key: "decepcion",
-    imagen: "https://tecolotito.elsiglodetorreon.com.mx/i/2020/09/1343005.jpeg",
-    grupo: "PASOS", oceanico: false
-  },
-  {
-    nombre: "Estrecho de Gerlache",
-    subtitulo: "",
-    gid: "2049108687", key: "gerlache",
-    imagen: "https://live.staticflickr.com/65535/54340781868_b05aa3340b_b.jpg",
-    grupo: "PASOS", oceanico: false
-  },
-  // ── PASO DRAKE — ÁREAS OCEÁNICAS ─────────────────────────────
-  {
-    // ── NUEVA: Cabo de Hornos ──────────────────────────────────
-    nombre: "Isla Cabo de Hornos",
-    subtitulo: "Faro Cabo de Hornos - ARMADA DE CHILE",
-    label: "Cabo de Hornos",
-    gid: "1873837819", key: "cabo-hornos",
-    imagen: "https://content-viajes.nationalgeographic.com.es/medio/2024/02/06/cabo-de-hornos-02_b4898020_240206134545_1280x853.jpg",
-    grupo: "DRAKE", oceanico: true
-  },
-  {
-    // ── NUEVA: Diego Ramírez ───────────────────────────────────
-    nombre: "Islas Diego Ramírez",
-    subtitulo: "Faro Diego Ramírez - ARMADA DE CHILE",
-    label: "Diego Ramírez",
-    gid: "224284106", key: "diego-ramirez",
-    imagen: "https://capehorncenter.com/wp-content/uploads/2024/10/islas-diego-ramirez-foto-graham-robertson-copia-1200x480.jpg",
-    grupo: "DRAKE", oceanico: true
-  },
-  {
-    // ── NUEVA: Drake Norte ─────────────────────────────────────
-    nombre: "Paso Drake",
-    subtitulo: "Área Oceánica — 56°02'S / 64°11'W | Mar de Drake sector Norte",
-    label: "Drake Norte",
-    gid: "1990081185", key: "drake-norte",
-    imagen: "https://fotos.perfil.com/2019/12/11/trim/987/555/tormenta-mar-paso-drake-g20191211-818574.jpg",
-    grupo: "DRAKE", oceanico: true
-  },
-  {
-    // ── NUEVA: Drake Centro ────────────────────────────────────
-    nombre: "Paso Drake",
-    subtitulo: "Área Oceánica — 59°01'S / 62°13'W | Mar de Drake sector Centro",
-    label: "Drake Centro",
-    gid: "639614422", key: "drake-centro",
-    imagen: "https://fotos.perfil.com/2019/12/11/trim/987/555/tormenta-mar-paso-drake-g20191211-818574.jpg",
-    grupo: "DRAKE", oceanico: true
-  },
-  {
-    // ── NUEVA: Drake Sur ───────────────────────────────────────
-    nombre: "Paso Drake",
-    subtitulo: "Área Oceánica — 61°05'S / 60°34'W | Mar de Drake sector Sur",
-    label: "Drake Sur",
-    gid: "960715002", key: "drake-sur",
-    imagen: "https://fotos.perfil.com/2019/12/11/trim/987/555/tormenta-mar-paso-drake-g20191211-818574.jpg",
-    grupo: "DRAKE", oceanico: true
-  }
-];
-
-// Aviso en consola para GIDs pendientes
-sectores.filter(s => s.gid === "0").forEach(s =>
-    console.warn(`⚠️ GID pendiente: "${s.nombre}" — hoja: pronostico_${s.key.replace(/-/g,'_')}`)
-);
-
-function getCSVUrl(gid) {
-    return `https://docs.google.com/spreadsheets/d/e/${ID_DOCUMENTO}/pub?gid=${gid}&single=true&output=csv`;
-}
-
-let URL_CSV = getCSVUrl(sectores[0].gid);
-let sectorActivo = sectores[0];
-let myCharts = {};
-
-// ── SECTOR TABS CON SEPARADORES POR GRUPO ─────────────────────
-(function initSectorTabs() {
-    const container = document.getElementById('sector-tabs');
-    if (!container) return;
-    container.innerHTML = "";
-    const grupoLabels = {
-        "BASES": "Bases Antárticas",
-        "PASOS": "Pasos - Estrechos Antárticos",
-        "DRAKE": "Paso Drake (área oceánica)"
-    };
-    let grupoActual = null;
-    sectores.forEach((s, i) => {
-        if (s.grupo !== grupoActual) {
-            if (grupoActual !== null) {
-                const sep = document.createElement('div');
-                sep.className = 'sector-group-sep';
-                container.appendChild(sep);
-            }
-            const lbl = document.createElement('span');
-            lbl.className = 'sector-group-label';
-            lbl.textContent = grupoLabels[s.grupo] || s.grupo;
-            container.appendChild(lbl);
-            grupoActual = s.grupo;
-        }
-        const btn = document.createElement('button');
-        btn.className = 'sector-tab';
-        btn.style.cssText = "padding:10px 22px;border-radius:10px;cursor:pointer;border:1px solid #e2e8f0;font-weight:700;font-size:0.85rem;transition:0.3s;white-space:nowrap;flex-shrink:0;";
-        if (i === 0) { btn.style.background='var(--navy)'; btn.style.color='white'; btn.classList.add('active'); }
-        else         { btn.style.background='white'; btn.style.color='var(--navy)'; }
-        btn.textContent = s.label || s.nombre;
-        btn.onclick = function() {
-            if (this.classList.contains('active')) return;
-            document.querySelectorAll('.sector-tab').forEach(t => { t.classList.remove('active'); t.style.background='white'; t.style.color='var(--navy)'; });
-            this.classList.add('active'); this.style.background='var(--navy)'; this.style.color='white';
-            sectorActivo = s;
-            const titleEl = document.getElementById('location-title');
-            if (titleEl) titleEl.textContent = s.nombre;
-            const subEl = document.getElementById('location-subtitle');
-            if (subEl) subEl.innerHTML = s.subtitulo || '';
-            // Badge oceánico
-            const badge = document.getElementById('badge-oceanico');
-            if (badge) badge.style.display = s.oceanico ? 'inline-flex' : 'none';
-            const bgImg = document.getElementById('header-bg-img');
-            if (bgImg && s.imagen) bgImg.style.backgroundImage = "url('" + s.imagen + "')";
-            // Si GID pendiente, mostrar aviso en grilla
-            if (s.gid === "0") {
-                document.getElementById('grid-pronostico').innerHTML =
-                    `<div style="grid-column:1/-1;padding:40px;text-align:center;background:white;border-radius:15px;color:#718096;">
-                        <div style="font-size:2.5rem;margin-bottom:12px;">⚙️</div>
-                        <div style="font-size:1.1rem;font-weight:900;color:var(--navy);">Pronóstico en configuración</div>
-                        <div style="font-size:0.85rem;margin-top:10px;line-height:1.6;">
-                            El sector <b>${s.nombre}</b> está pendiente de asignación de GID en Google Sheets.<br>
-                            Hoja Python generadora: <code style="background:#f0f4f8;padding:2px 6px;border-radius:4px;">pronostico_${s.key.replace(/-/g,'_')}</code>
-                        </div>
-                    </div>`;
-                document.getElementById('days-nav').innerHTML = '';
-                return;
-            }
-            URL_CSV = getCSVUrl(s.gid);
-            if (typeof fetchSheetsData === 'function') fetchSheetsData();
-            closeSidebar();
-        };
-        container.appendChild(btn);
-    });
-})();
-
-// ── UTILIDADES ─────────────────────────────────────────────────
-function verVersionWeb() {
-    if (window.innerWidth < 1025) {
-        document.querySelector('meta[name="viewport"]')
-            .setAttribute('content','width=1280,initial-scale=0.45,minimum-scale=0.3');
-    }
-    const btnWeb = document.querySelector('.btn-ver-web');
-    const btnHam = document.querySelector('.hamburger-btn');
-    if (btnWeb) btnWeb.style.display='none';
-    if (btnHam) btnHam.style.display='none';
-}
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebar-overlay').classList.toggle('active');
-}
-function closeSidebar() {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebar-overlay').classList.remove('active');
-}
-document.querySelectorAll('.external-link').forEach(l => l.addEventListener('click', closeSidebar));
-
-function getModelRunInfo() {
-    const h = new Date().getHours();
-    let runHoraUTC, runModelo = "GFS / AMPS";
-    if (h>=6&&h<14) runHoraUTC="06:00";
-    else if (h>=14&&h<20) runHoraUTC="12:00";
-    else if (h>=20&&h<24) runHoraUTC="18:00";
-    else runHoraUTC="00:00";
-    return {runHoraUTC, runModelo};
-}
-
-function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').innerText = now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:'America/Punta_Arenas'}) + " (UTC -3)";
-    document.getElementById('current-date').innerText = now.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'America/Punta_Arenas'});
-    const r = getModelRunInfo();
-    document.getElementById('last-run').innerText = r.runHoraUTC+' UTC | '+r.runModelo;
-}
-
-async function fetchBirdseyeWeather() {
-    try {
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-62.48&longitude=-59.66&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,uv_index,visibility&wind_speed_unit=kn`);
-        const data = await res.json();
-        const c = data.current;
-        const dirs=['NORTE','N/NE','NE','E/NE','ESTE','E/SE','SE','S/SE','SUR','S/SW','SW','SW/W','WESTE','W/NW','NW','NW/N'];
-        const getDirText = d => dirs[Math.round(d/22.5)%16];
-        const temp=c.temperature_2m, windKts=c.wind_speed_10m, windKmH=windKts*1.852;
-        const uv=(c.uv_index!=null)?c.uv_index:0;
-        const rh=(c.relative_humidity_2m!=null)?c.relative_humidity_2m:null;
-        const vis_km=(c.visibility!=null)?(c.visibility/1000):null;
-        let wc=temp;
-        if(temp<=10&&windKmH>4.8) wc=13.12+(0.6215*temp)-(11.37*Math.pow(windKmH,0.16))+(0.3965*temp*Math.pow(windKmH,0.16));
-        let uvColor="#27ae60";
-        if(uv>=11)uvColor="#8e44ad";else if(uv>=8)uvColor="#e74c3c";else if(uv>=6)uvColor="#e67e22";else if(uv>=3)uvColor="#f1c40f";
-        const rot=(c.wind_direction_10m+180)%360;
-        document.getElementById('header-metrics').innerHTML=`
-            <div class="metric-item"><div class="metric-val">
-                <div style="background:var(--navy);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid white;flex-shrink:0;">
-                    <span style="transform:rotate(${rot}deg);display:inline-block;">↑</span></div>
-                ${Math.round(windKts)} kts <small>(R ${Math.round(c.wind_gusts_10m)})</small></div>
-                <div class="metric-label">Viento (${getDirText(c.wind_direction_10m)})</div></div>
-            <div class="sep">|</div>
-            <div class="metric-item"><div class="metric-val" style="color:#0000ff">${Math.round(temp)}°C</div><div class="metric-label">T° Aire</div></div>
-            <div class="sep">|</div>
-            <div class="metric-item"><div class="metric-val" style="color:#ff0000">${Math.round(wc)}°C</div><div class="metric-label">Sensación Térmica (E.V)</div></div>
-            <div class="sep">|</div>
-            <div class="metric-item"><div class="metric-val" style="color:${uvColor}">${uv.toFixed(1)}</div><div class="metric-label">Índice UV</div></div>
-            <div class="sep">|</div>
-            <div class="metric-item"><div class="metric-val">${Math.round(c.surface_pressure)} hPa</div><div class="metric-label">Presión</div></div>
-            ${rh!==null?`<div class="sep">|</div><div class="metric-item"><div class="metric-val">${Math.round(rh)}%</div><div class="metric-label">Humedad Rel.</div></div>`:''}
-            <div class="sep">|</div><div class="metric-item"><div class="metric-val" style="font-size:0.65rem;color:#1a3a5a;opacity:0.7;">Open-Meteo API</div><div class="metric-label" style="font-size:0.5rem;">FUENTE</div></div>`;
-        updateTrafficLights(windKts,c.wind_gusts_10m,wc,uv,vis_km);
-    } catch(e){console.error("Error RealTime",e);}
-}
-
-function updateTrafficLights(wind,gusts,chill,uv,vis_km){
-    const setLight=(id,col)=>{const el=document.getElementById(id);if(el)el.querySelector('.dot').style.background=col;};
-    if(vis_km!=null){
-        if(vis_km<1)setLight('light-botes','#ff0000');
-        else if(vis_km<=4)setLight('light-botes','#ffc000');
-        else if(wind>=25||gusts>=30)setLight('light-botes','#ff0000');
-        else if(wind>=20||gusts>=25)setLight('light-botes','#ffc000');
-        else setLight('light-botes','#92d050');
-    }else{
-        if(wind>=25||gusts>=30)setLight('light-botes','#ff0000');
-        else if(wind>=20||gusts>=25)setLight('light-botes','#ffc000');
-        else setLight('light-botes','#92d050');
-    }
-    if(vis_km!=null&&vis_km<2)setLight('light-vuelo','#ff0000');
-    else if(gusts>=25)setLight('light-vuelo','#ff0000');
-    else if(gusts>=30)setLight('light-vuelo','#ffc000');
-    else setLight('light-vuelo','#92d050');
-    if(chill<=-15||uv>=11)setLight('light-exterior','#ff0000');
-    else if(chill<=-15||uv>=8)setLight('light-exterior','#ffc000');
-    else setLight('light-exterior','#92d050');
-}
-
-async function fetchSheetsData(){
-    if(!sectorActivo||sectorActivo.gid==="0")return;
-    Papa.parse(URL_CSV,{
-        download:true,header:false,skipEmptyLines:true,
-        complete:function(results){
-            const clean=results.data.filter(r=>r[0]&&r[0]!=="Día"&&r[1]!=="");
-            window.allWeather=clean;
-            const dias=[...new Set(clean.map(r=>r[0]))];
-            const diaActual=document.querySelector('.day-tab.active')?.innerText||dias[0];
-            document.getElementById('days-nav').innerHTML=dias.map(d=>
-                `<div class="day-tab ${d===diaActual?'active':''}" onclick="renderDia('${d}',this)">${d}</div>`).join('');
-            renderDia(diaActual);
-        }
-    });
-}
-
-function renderDia(dia,element){
-    if(element){document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));element.classList.add('active');}
-    const filtered=(window.allWeather||[]).filter(r=>r[0]===dia);
-    const dayIdx=[...new Set((window.allWeather||[]).map(r=>r[0]))].indexOf(dia);
-    const esProyeccion=dia.toUpperCase().includes("PROYECCION")||dia.toUpperCase().includes("PROYECCIÓN");
-    const esOceanico=sectorActivo&&sectorActivo.oceanico;
-
-    let gridHtml=filtered.map(r=>{
-        const n=(r[4]||"0").match(/\d+/g);
-        const val=n?(n.length>=2?parseInt(n[1]):parseInt(n[0])):0;
-        let riesgoT,riesgoC,ico,bgC;
-        if(val>=30){riesgoT="PELIGRO EXTREMO";riesgoC="card-peligro";ico="🚫";bgC="bg-peligro";}
-        else if(val>=21){riesgoT="RIESGO ALTO";riesgoC="card-alto";ico="⚠️";bgC="bg-alto";}
-        else if(val>=16){riesgoT="RIESGO MODERADO";riesgoC="card-mod";ico="⚠️";bgC="bg-mod";}
-        else{riesgoT="RIESGO BAJO";riesgoC="card-bajo";ico="✅";bgC="bg-bajo";}
-        if(val>=21)riesgoC+=" card-titilar";
-        // Etiqueta y clase especial para mar oceánica
-        const marLabel = esOceanico ? "🌊 MAR / FONDO:" : "🌊 MAR:";
-        const marClass = esOceanico ? "data-row mar-oceanica" : "data-row";
-        return `<div class="card ${riesgoC}">
-            <div class="card-header"><h3>${r[1]}</h3><div class="risk-tag ${bgC}">${ico} ${riesgoT}</div></div>
-            <div class="data-row"><span>🌤️ CIELO:</span><b>${r[2]}</b></div>
-            <div class="data-row"><span>👁️ VIS:</span><b>${r[3]}</b></div>
-            <div class="data-row"><span>💨 VIENTO:</span><b>${r[4]}</b></div>
-            <div class="${marClass}"><span>${marLabel}</span><b>${r[5]}</b></div>
-            <div class="temp-box">
-                <div class="temp-item"><small>Temperatura del aire</small><div style="color:#0000ff">${r[6]}</div></div>
-                <div class="temp-item"><small>Sensación Térmica</small><div style="color:#ff0000">${r[7]}</div></div>
-            </div>
-            <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.08);font-size:0.65rem;color:#718096;font-weight:700;text-align:center;letter-spacing:0.3px;">Análisis propio de modelos: AMPS (coef. 5.0) - GFS (coef. 3.0)</div>
-        </div>`;
-    }).join('');
-
-    if(!esProyeccion) gridHtml+=`<button class="btn-full-day" onclick="verDetalle24h(${dayIdx},'${dia}')">📊 DETALLE POR HORA (${dia})</button>`;
-    document.getElementById('grid-pronostico').innerHTML=gridHtml;
-}
-
-async function verDetalle24h(idx,dia){
-    document.getElementById('modalTitle').innerText=`Pronóstico Horario: ${dia}`;
-    document.getElementById('modalDetalle').style.display='block';
-    const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-62.478796&longitude=-59.665912&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m,wind_gusts_10m,cloud_cover,pressure_msl&wind_speed_unit=kn&timezone=America%2FPunta_Arenas`);
-    const data=await res.json();
-    const l=[],v=[],r=[],t=[],st=[],h=[],p=[],cld=[],pres=[];let htm="";
-    for(let i=idx*24;i<(idx*24)+24;i++){
-        if(!data.hourly.time[i])break;
-        const hr=data.hourly.time[i].split('T')[1].substring(0,5);
-        l.push(hr);v.push(data.hourly.wind_speed_10m[i]);r.push(data.hourly.wind_gusts_10m[i]);
-        t.push(data.hourly.temperature_2m[i]);st.push(data.hourly.apparent_temperature[i]);
-        p.push(data.hourly.precipitation[i]);h.push(data.hourly.relative_humidity_2m[i]);
-        cld.push(data.hourly.cloud_cover[i]);pres.push(data.hourly.pressure_msl[i]);
-        htm+=`<tr><td>${hr}</td><td>${Math.round(v[v.length-1])}/${Math.round(r[r.length-1])}</td>
-        <td><span style="color:#0000ff">${t[t.length-1]}°</span>/<span style="color:#ff0000">${st[st.length-1]}°</span></td>
-        <td>${p[p.length-1]}</td><td>${h[h.length-1]}%</td><td>${cld[cld.length-1]}%</td><td>${Math.round(pres[pres.length-1])}</td></tr>`;
-    }
-    document.getElementById('modalBody').innerHTML=htm;
-    initCharts(l,v,r,t,st,h,p,cld,pres);
-}
-
-function initCharts(l,v,r,t,st,h,p,cld,pres){
-    function createChartModal(id,ci){
-        let m=document.getElementById('chart-modal-'+id);
-        if(!m){
-            m=document.createElement('div');m.id='chart-modal-'+id;
-            m.style.cssText='display:none;position:fixed;z-index:20000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);cursor:pointer;';
-            const c=document.createElement('div');c.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;height:80%;background:white;border-radius:20px;padding:30px;box-sizing:border-box;';
-            const x=document.createElement('span');x.innerHTML='&times;';x.style.cssText='position:absolute;top:15px;right:25px;font-size:3rem;font-weight:900;cursor:pointer;color:#1a3a5a;z-index:10;';
-            x.onclick=e=>{e.stopPropagation();m.style.display='none';};
-            const cc=document.createElement('div');cc.style.cssText='width:100%;height:100%;position:relative;';
-            const nc=document.createElement('canvas');nc.id='modal-canvas-'+id;
-            cc.appendChild(nc);c.appendChild(x);c.appendChild(cc);m.appendChild(c);document.body.appendChild(m);
-            m.onclick=e=>{if(e.target===m)m.style.display='none';};
-        }
-        m.style.display='block';
-        const ctx=document.getElementById('modal-canvas-'+id).getContext('2d');
-        if(window['mc_'+id])window['mc_'+id].destroy();
-        window['mc_'+id]=new Chart(ctx,{type:ci.config.type,data:ci.config.data,options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:16,weight:'bold'}}}},scales:{x:{ticks:{font:{size:14}}},y:{ticks:{font:{size:14}}}}}});
-    }
-    const conf=(id,lab,lab2,dat,dat2,col,col2,type='line')=>{
-        if(myCharts[id])myCharts[id].destroy();
-        const ds=[{label:lab,data:dat,borderColor:col,backgroundColor:col+'22',fill:true,tension:0.3}];
-        if(dat2)ds.push({label:lab2||'Rachas',data:dat2,borderColor:col2||'red',borderDash:[5,5],fill:false,tension:0.3});
-        const canvas=document.getElementById(id);
-        myCharts[id]=new Chart(canvas,{type,data:{labels:l,datasets:ds},options:{responsive:true,maintainAspectRatio:false,onClick:()=>createChartModal(id,myCharts[id]),onHover:(e,a)=>{e.native.target.style.cursor=a.length>0?'pointer':'zoom-in';}}});
-        canvas.style.cursor='zoom-in';
-    };
-    conf('chartViento','Viento (kts)','Rachas',v,r,'#3498db','#e74c3c');
-    conf('chartTemp','T° Aire (°C)','Sensación',t,st,'#0000ff','#ff0000');
-    conf('chartPrec','Prec. (mm)',null,p,null,'#27ae60',null,'bar');
-    conf('chartHum','Humedad (%)',null,h,null,'#16a085',null);
-    conf('chartCloud','Nubosidad (%)',null,cld,null,'#7f8c8d',null);
-    conf('chartPresion','Presión (hPa)',null,pres,null,'#8e44ad',null);
-}
-
-function cerrarModal(){document.getElementById('modalDetalle').style.display='none';}
-
-updateClock();fetchBirdseyeWeather();fetchSheetsData();
-setInterval(updateClock,1000);setInterval(fetchBirdseyeWeather,120000);setInterval(fetchSheetsData,120000);
-</script>
-
-<!-- ══════════════════════════════════════════
-     Widget Calculadora de Enfriamiento por Viento
-══════════════════════════════════════════ -->
-<style>
-  #prat-wc{position:fixed;right:20px;bottom:20px;width:340px;background:#1a3a5a;color:white;border-radius:15px;box-shadow:0 12px 40px rgba(0,0,0,0.5);font-family:'Roboto',sans-serif;z-index:99999;overflow:hidden;border:1px solid rgba(255,255,255,0.1);}
-  #prat-wc .head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(0,0,0,0.2);}
-  #prat-wc .head .title{font-weight:900;font-size:1.0rem;text-transform:uppercase;letter-spacing:0.5px;}
-  #prat-wc .head button{background:none;border:none;color:white;font-size:1.0rem;cursor:pointer;line-height:1;}
-  #prat-wc .body{padding:15px;}
-  #prat-wc label{font-size:1.0rem;color:#a0c4ff;display:block;margin-bottom:5px;font-weight:800;text-transform:uppercase;}
-  #prat-wc input{width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:12px;background:white;color:#1a3a5a;font-weight:700;font-size:1.0rem;box-sizing:border-box;}
-  #prat-wc .row{display:flex;gap:10px;}
-  #prat-wc .btn-calc{background:#3498db;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;font-weight:900;flex:1;text-transform:uppercase;transition:0.3s;}
-  #prat-wc .btn-calc:hover{background:#2980b9;}
-  #prat-wc .btn-sync{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);padding:10px;border-radius:8px;cursor:pointer;font-size:1.0rem;font-weight:700;}
-  #prat-result-box{margin-top:15px;padding:15px;border-radius:10px;text-align:center;transition:0.5s;color:#1a1a1a;background:#ecf0f1;}
-  #prat-result-box .val{font-size:1.8rem;font-weight:900;display:block;}
-  #prat-result-box .desc{font-size:1.0rem;font-weight:800;text-transform:uppercase;margin-top:5px;display:block;}
-  .risk-muy-peligro{background:#ffff00!important;color:black!important;}
-  .risk-ext-peligro{background:#ff0000!important;color:white!important;animation:pulse-red-wc 1s infinite;}
-  @keyframes pulse-red-wc{0%{box-shadow:inset 0 0 0 0 rgba(0,0,0,0.2)}50%{box-shadow:inset 0 0 20px 0 rgba(0,0,0,0.5)}100%{box-shadow:inset 0 0 0 0 rgba(0,0,0,0.2)}}
-  #prat-wc.collapsed{width:50px;height:50px;border-radius:50%;cursor:pointer;}
-  #prat-wc.collapsed .body,#prat-wc.collapsed .head .title{display:none;}
-  #prat-wc.collapsed .head{padding:13px;justify-content:center;}
-  @media(max-width:768px){#prat-wc{width:calc(100vw - 40px)!important;right:10px!important;bottom:10px!important;left:auto!important;}}
-</style>
-
-<div id="prat-wc">
-  <div class="head"><div class="title">Calculadora de Enfriamiento</div><button id="prat-toggle">—</button></div>
-  <div class="body">
-    <label>Temperatura Aire (°C)</label>
-    <input type="number" id="inp-t" placeholder="Ej: -10" step="0.5">
-    <label>Velocidad Viento (Nudos)</label>
-    <input type="number" id="inp-v" placeholder="Ej: 20" step="1">
-    <div class="row">
-      <button class="btn-sync" id="btn-sync">Sincronizar Estación</button>
-      <button class="btn-calc" id="btn-calc">Calcular</button>
-    </div>
-    <div id="prat-result-box">
-      <small style="font-weight:800;opacity:0.7;">SENSACIÓN TÉRMICA</small>
-      <span class="val" id="res-val">—</span>
-      <span class="desc" id="res-desc">Ingrese datos</span>
-    </div>
-    <p style="font-size:0.6rem;color:#a0c4ff;margin-top:10px;text-align:center;font-weight:600;">Basado en Tabla Oficial de Enfriamiento por Viento (Base Prat)</p>
   </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded',function(){
-  const va=[5,10,15,20,25,30,35,40];
-  const ta=[10,7.5,5,2.5,0,-2.5,-5,-7.5,-10,-12.5,-15,-17.5,-20,-22.5,-25,-27.5,-30,-32.5,-35,-37.5,-40,-42.5,-45,-47.5,-50];
-  const tb=[
-    [7.5,5,2.5,0,-2.5,-5,-7.5,-10,-12.5,-15,-17.5,-20,-22.5,-25,-27.5,-30,-32.5,-35,-37.5,-40,-45,-47.5,-50,-52.5,-55],
-    [5,2.5,-2.5,-5,-7.5,-10,-12.5,-15,-17.5,-20,-25,-27.5,-32.5,-35,-37.5,-40,-45,-47.5,-50,-52.5,-57.5,-60,-62.5,-65,-67.5],
-    [2.5,0,-5,-7.5,-10,-12.5,-17.5,-20,-25,-27.5,-32.5,-35,-37.5,-42.5,-45,-47.5,-52.5,-55,-57.5,-60,-65,-67.5,-72.5,-75,-77.5],
-    [0,-2.5,-7.5,-10,-12.5,-17.5,-20,-22.5,-25,-30,-35,-37.5,-42.5,-45,-47.5,-50,-52.5,-57.5,-60,-65,-67.5,-72.5,-75,-80,-85],
-    [0,-5,-7.5,-10,-15,-17.5,-22.5,-25,-30,-32.5,-37.5,-40,-45,-47.5,-52.5,-55,-60,-65,-67.5,-70,-72.5,-77.5,-82.5,-85,-90],
-    [-2.5,-5,-10,-12.5,-17.5,-20,-25,-27.5,-32.5,-35,-40,-42.5,-47.5,-50,-55,-57.5,-62.5,-67.5,-72.5,-75,-80,-85,-90,-95,-95],
-    [-2.5,-7.5,-10,-12.5,-17.5,-20,-25,-30,-32.5,-37.5,-42.5,-45,-50,-52.5,-57.5,-60,-65,-67.5,-72.5,-75,-80,-87.5,-90,-95,-95],
-    [-2.5,-7.5,-10,-15,-20,-22.5,-27.5,-30,-35,-37.5,-42.5,-45,-50,-55,-60,-62.5,-65,-70,-75,-77.5,-82.5,-85,-90,-92.5,-97.5]
-  ];
-  const lerp=(x,x0,x1,y0,y1)=>y0+(x-x0)*(y1-y0)/(x1-x0);
-  function calcST(t,v){
-    try{
-      if(isNaN(t)||isNaN(v))return null;
-      if(v<5)return t; if(v>40)v=40; if(t>10)return t; if(t<-50)t=-50;
-      let iv=va.findIndex(x=>x>=v); if(iv<0)iv=va.length-1; if(iv===0)iv=1;
-      let it=ta.findIndex(x=>x<=t); if(it<0)it=ta.length-1; if(it===0)it=ta.length-1;
-      const t0=ta[it-1]??ta[it],t1=ta[it]??ta[it-1];
-      const q11=tb[iv-1]?.[it-1]??t,q12=tb[iv-1]?.[it]??t,q21=tb[iv]?.[it-1]??t,q22=tb[iv]?.[it]??t;
-      return Math.round(lerp(v,va[iv-1],va[iv],lerp(t,t0,t1,q11,q12),lerp(t,t0,t1,q21,q22))*10)/10;
-    }catch{return null;}
-  }
-  const btnC=document.getElementById('btn-calc'),rBox=document.getElementById('prat-result-box'),rVal=document.getElementById('res-val'),rDesc=document.getElementById('res-desc');
-  if(btnC)btnC.addEventListener('click',()=>{
-    const t=parseFloat(document.getElementById('inp-t').value),v=parseFloat(document.getElementById('inp-v').value);
-    if(isNaN(t)||isNaN(v)){rVal.innerText="—";rDesc.innerText="Ingrese temperatura y viento";return;}
-    const st=calcST(t,v); if(st===null){rVal.innerText="—";rDesc.innerText="Error cálculo";return;}
-    rVal.innerText=st+"°C"; rBox.className=''; rBox.style.background="#ecf0f1";
-    if(st<=-57.5){rDesc.innerText="EXTREMADAMENTE PELIGROSO (Congelamiento 30s)";rBox.classList.add('risk-ext-peligro');}
-    else if(st<=-30){rDesc.innerText="MUY PELIGROSO (Congelamiento 1 min)";rBox.classList.add('risk-muy-peligro');}
-    else rDesc.innerText="PELIGRO (Usar vestimenta adecuada)";
-  });
-  const btnS=document.getElementById('btn-sync');
-  if(btnS)btnS.addEventListener('click',()=>{
-    const txt=document.getElementById('header-metrics').innerText||'';
-    const tm=txt.match(/(-?\d+)\s*°C/),vm=txt.match(/(\d+)\s?kts/);
-    if(tm)document.getElementById('inp-t').value=tm[1];
-    if(vm)document.getElementById('inp-v').value=vm[1];
-    if(btnC)btnC.click();
-  });
-  const wg=document.getElementById('prat-wc'),tg=document.getElementById('prat-toggle');
-  if(tg&&wg)tg.addEventListener('click',e=>{e.stopPropagation();wg.classList.toggle('collapsed');tg.innerText=wg.classList.contains('collapsed')?"+":"—";});
-});
-</script>
+  <!-- ── WIDGET CALCULADORA ── -->
+  <div id="prat-wc" class="wc-widget">
+    <div class="wc-head">
+      <div class="wc-title">Calculadora de enfriamiento</div>
+      <button id="prat-toggle" aria-label="Colapsar">—</button>
+    </div>
+    <div class="wc-body">
+      <label for="inp-t">Temperatura aire (°C)</label>
+      <input type="number" id="inp-t" placeholder="Ej: -10" step="0.5" />
+      <label for="inp-v">Velocidad viento (nudos)</label>
+      <input type="number" id="inp-v" placeholder="Ej: 20" step="1" />
+      <div class="wc-row">
+        <button class="wc-btn-sync" id="btn-sync">Sincronizar estación</button>
+        <button class="wc-btn-calc" id="btn-calc">Calcular</button>
+      </div>
+      <div id="prat-result-box" class="wc-result">
+        <small>SENSACIÓN TÉRMICA</small>
+        <span class="wc-val" id="res-val">—</span>
+        <span class="wc-desc" id="res-desc">Ingrese datos</span>
+      </div>
+      <p class="wc-note">Basado en la tabla oficial de enfriamiento por viento (Base Prat).</p>
+    </div>
+  </div>
+
+  <!-- Lógica (módulos ES) -->
+  <script type="module" src="js/app.js?v=20260718072044"></script>
 </body>
 </html>
