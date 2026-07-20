@@ -1,0 +1,121 @@
+// ════════════════════════════════════════════════════════════════
+//  PRONÓSTICO por sectores — lee CSV de Google Sheets, renderiza
+//  tarjetas por día y abre el detalle horario (Open-Meteo).
+// ════════════════════════════════════════════════════════════════
+
+import { CONFIG, getCSVUrl } from "./config.js?v=20260718083456";
+import { esc } from "./utils.js?v=20260718083456";
+import { abrirDetalleHorario } from "./graficos.js?v=20260718083456";
+import { construirResumen } from "./vista-resumen.js?v=20260718083456";
+
+let sectorActivo = null;
+let filasPronostico = [];
+
+const grid = () => document.getElementById("grid-pronostico");
+const navDias = () => document.getElementById("days-nav");
+
+// ── Estados visibles ─────────────────────────────────────────────
+function mostrarCargando() {
+  grid().innerHTML = `
+    <div class="state-box">
+      <div class="spinner" role="status" aria-label="Cargando"></div>
+      <div class="state-title">Cargando pronóstico…</div>
+      <div class="state-msg">Obteniendo datos del sector ${esc(sectorActivo?.nombre || "")}.</div>
+    </div>`;
+  navDias().innerHTML = "";
+}
+
+function mostrarError(mensaje) {
+  grid().innerHTML = `
+    <div class="state-box">
+      <div class="state-icon">📡</div>
+      <div class="state-title">No se pudo cargar el pronóstico</div>
+      <div class="state-msg">${esc(mensaje)}</div>
+      <button class="btn-retry" id="btn-retry">Reintentar</button>
+    </div>`;
+  navDias().innerHTML = "";
+  document.getElementById("btn-retry")?.addEventListener("click", cargarSector);
+}
+
+// ── Clasificación de riesgo por viento ───────────────────────────
+// ── Render del resumen (tira de días + bloques 6h) ───────────────
+function renderResumen(diaSeleccionado) {
+  const { html } = construirResumen(filasPronostico, diaSeleccionado);
+  if (!html) {
+    mostrarError("No se pudo interpretar el pronóstico de este sector.");
+    return;
+  }
+  grid().innerHTML = html;
+  navDias().innerHTML = "";
+
+  // Clic en un día de la tira → recalcula los bloques de 6 h de ese día.
+  grid().querySelectorAll(".resumen-dia").forEach((btn) => {
+    btn.addEventListener("click", () => renderResumen(btn.dataset.dia));
+  });
+
+  // Botones de desplazamiento de la tira. En móvil el gesto táctil
+  // puede quedar capturado por otros elementos, así que se ofrece
+  // navegación explícita por toque.
+  const tira = grid().querySelector("#resumen-tira");
+  const desplazar = (dir) => {
+    if (!tira) return;
+    tira.scrollBy({ left: dir * Math.max(tira.clientWidth * 0.7, 110), behavior: "smooth" });
+  };
+  grid().querySelector("#tira-izq")?.addEventListener("click", () => desplazar(-1));
+  grid().querySelector("#tira-der")?.addEventListener("click", () => desplazar(1));
+
+  // Oculta las flechas cuando no hay nada más que mostrar en ese lado.
+  const actualizarFlechas = () => {
+    if (!tira) return;
+    const izq = grid().querySelector("#tira-izq");
+    const der = grid().querySelector("#tira-der");
+    const max = tira.scrollWidth - tira.clientWidth;
+    if (izq) izq.style.visibility = tira.scrollLeft > 4 ? "visible" : "hidden";
+    if (der) der.style.visibility = tira.scrollLeft < max - 4 ? "visible" : "hidden";
+  };
+  tira?.addEventListener("scroll", actualizarFlechas);
+  actualizarFlechas();
+
+  // Enlace al detalle por hora (modal con gráficos, Open-Meteo).
+  grid().querySelector("#btn-horario")?.addEventListener("click", (ev) => {
+    const { idx, dia } = ev.currentTarget.dataset;
+    abrirDetalleHorario(parseInt(idx), dia);
+  });
+}
+
+// ── Carga del sector activo desde Google Sheets ──────────────────
+export function cargarSector() {
+  if (!sectorActivo) return;
+  mostrarCargando();
+
+  Papa.parse(getCSVUrl(sectorActivo.gid), {
+    download: true,
+    header: false,
+    skipEmptyLines: true,
+    complete(results) {
+      const limpio = results.data.filter(
+        (r) => r[0] && r[0] !== "Día" && r[0] !== "a" && r[1] !== ""
+      );
+      if (!limpio.length) {
+        mostrarError("La hoja no devolvió datos. Puede que el sector aún no tenga pronóstico publicado.");
+        return;
+      }
+      filasPronostico = limpio;
+      const dias = [...new Set(limpio.map((r) => r[0]))];
+      renderResumen(dias[0]);
+    },
+    error(err) {
+      mostrarError("No hay conexión con el servidor de datos. Revisa tu red y reintenta.");
+      console.error("Papa.parse error:", err);
+    },
+  });
+}
+
+export function setSectorActivo(sector) {
+  sectorActivo = sector;
+  cargarSector();
+}
+
+export function getSectorActivo() {
+  return sectorActivo;
+}
