@@ -703,7 +703,7 @@ header {
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
-    touch-action: pan-x;
+    touch-action: auto;
   }
   .resumen-wrap { overflow: visible !important; max-width: 100%; }
 }
@@ -713,7 +713,7 @@ header {
   .mt-scroll {
     overflow-x: scroll !important;
     max-width: 100%;
-    touch-action: pan-x;
+    touch-action: auto;
   }
   .meteotabla-section { overflow: visible !important; max-width: 100%; }
 }
@@ -762,13 +762,13 @@ header {
 
   /* ── Tira de días: se asegura el gesto horizontal ── */
   .resumen-tira {
-    touch-action: pan-x !important;
+    touch-action: auto !important;
     overscroll-behavior-x: contain;
   }
-  .resumen-dia { touch-action: manipulation; }
+  .resumen-dia { touch-action: auto; }
 
   .mt-scroll {
-    touch-action: pan-x !important;
+    touch-action: auto !important;
     overscroll-behavior-x: contain;
   }
 }
@@ -843,7 +843,7 @@ header {
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-x !important;
+    touch-action: auto !important;
     overscroll-behavior-x: contain !important;
     scroll-snap-type: x mandatory;
   }
@@ -859,7 +859,7 @@ header {
     min-width: 0 !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-x !important;
+    touch-action: auto !important;
     overscroll-behavior-x: contain !important;
   }
 }
@@ -945,7 +945,7 @@ header {
 @media (max-width: 768px) {
   .resumen-dia { width: 104px; padding: 10px 5px; }
   .resumen-tabla { border-spacing: 6px 0; }
-  .resumen-scroll { touch-action: pan-x; }
+  .resumen-scroll { touch-action: auto; }
 }
 
 /* Neutraliza las reglas de grid anteriores: el contenedor
@@ -1078,7 +1078,7 @@ header {
   .b6-tabla { min-width: 600px; }
   .b6-tabla thead th { font-size: 0.6rem; padding: 0 8px 6px; }
   .b6-tabla .b6-fila td { padding: 10px 8px; font-size: 0.78rem; }
-  .b6-scroll { touch-action: pan-x; }
+  .b6-scroll { touch-action: auto; }
 }
 
 /* Neutraliza asignaciones de grid-area residuales del layout anterior. */
@@ -1103,3 +1103,19 @@ header {
   .b6-panel .b6-header { display: table-row !important; }
   .b6-panel .b6-tabla { min-width: 600px !important; }
 }
+
+
+/* ════════════════════════════════════════════════════════════════
+   ZOOM TÁCTIL — el gesto de pellizco debe llegar a la página y no
+   quedar capturado por los contenedores con desplazamiento propio.
+   La presentación de las tablas no cambia: solo se libera el gesto.
+   ════════════════════════════════════════════════════════════════ */
+html, body { touch-action: auto !important; }
+.b6-scroll,
+.b6-panel,
+.b6-tabla,
+.resumen-scroll,
+.resumen-tira-cont,
+.grid-container,
+.meteotabla-section,
+.main-content { touch-action: auto !important; }
