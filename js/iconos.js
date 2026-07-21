@@ -57,8 +57,9 @@ const gotasLluvia = (n = 5) => {
     const dy = i % 2 ? 1.5 : 0;
     return `<line x1="${x}" y1="${33 + dy}" x2="${x - 1.4}" y2="${36.5 + dy}"/>`;
   }).join("");
-  return `<g stroke="#ffffff" stroke-width="2" stroke-linecap="round"
-    filter="url(#dropsh)">${l}</g>`;
+  // Doble trazo: negro de fondo para el contorno, blanco encima.
+  return `<g stroke="#1a1a1a" stroke-width="3.6" stroke-linecap="round">${l}</g>
+          <g stroke="#ffffff" stroke-width="2" stroke-linecap="round">${l}</g>`;
 };
 
 // Copos de nieve — n=3 o n=5. Blancos, más pequeños, con borde sutil.
@@ -67,12 +68,14 @@ const coposNieve = (n = 5) => {
   return xs.map((x, i) => {
     const y = 34 + (i % 2 ? 1.5 : 0);
     const r = 1.8;
-    return `<g stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" filter="url(#dropsh)">
+    const brazos = `
       <line x1="${x - r}" y1="${y}" x2="${x + r}" y2="${y}"/>
       <line x1="${x}" y1="${y - r}" x2="${x}" y2="${y + r}"/>
       <line x1="${x - r * 0.7}" y1="${y - r * 0.7}" x2="${x + r * 0.7}" y2="${y + r * 0.7}"/>
-      <line x1="${x - r * 0.7}" y1="${y + r * 0.7}" x2="${x + r * 0.7}" y2="${y - r * 0.7}"/>
-    </g>`;
+      <line x1="${x - r * 0.7}" y1="${y + r * 0.7}" x2="${x + r * 0.7}" y2="${y - r * 0.7}"/>`;
+    // Doble trazo: negro de fondo para el contorno, blanco encima.
+    return `<g stroke="#1a1a1a" stroke-width="2.6" stroke-linecap="round">${brazos}</g>
+            <g stroke="#ffffff" stroke-width="1.2" stroke-linecap="round">${brazos}</g>`;
   }).join("");
 };
 
@@ -87,11 +90,20 @@ const nubePrecip = `<svg viewBox="0 0 40 40">${DROPSHADOW}${fit(CLOUD(6, 4, "#dd
 const PRECIP_SVG = {
   nieve: (n) => `${nubePrecip}${coposNieve(n)}</svg>`,
   lluvia: (n) => `${nubePrecip}${gotasLluvia(n)}</svg>`,
-  niebla: () => `<svg viewBox="0 0 40 40"><g stroke="#a8b2bc" stroke-width="2.8" stroke-linecap="round">
-    <line x1="6" y1="14" x2="34" y2="14"/><line x1="9" y1="20" x2="31" y2="20"/>
-    <line x1="6" y1="26" x2="34" y2="26"/><line x1="10" y1="32" x2="28" y2="32"/></g></svg>`,
-  neblina: () => `<svg viewBox="0 0 40 40"><g stroke="#bcc4cc" stroke-width="2.2" stroke-linecap="round" opacity="0.85">
-    <line x1="7" y1="16" x2="33" y2="16"/><line x1="10" y1="22" x2="30" y2="22"/><line x1="7" y1="28" x2="33" y2="28"/></g></svg>`,
+  niebla: () => {
+    const lineas = `<line x1="6" y1="14" x2="34" y2="14"/><line x1="9" y1="20" x2="31" y2="20"/>
+      <line x1="6" y1="26" x2="34" y2="26"/><line x1="10" y1="32" x2="28" y2="32"/>`;
+    return `<svg viewBox="0 0 40 40">
+      <g stroke="#1a1a1a" stroke-width="3.8" stroke-linecap="round">${lineas}</g>
+      <g stroke="#a8b2bc" stroke-width="2.8" stroke-linecap="round">${lineas}</g></svg>`;
+  },
+  neblina: () => {
+    const lineas = `<line x1="7" y1="16" x2="33" y2="16"/>
+      <line x1="10" y1="22" x2="30" y2="22"/><line x1="7" y1="28" x2="33" y2="28"/>`;
+    return `<svg viewBox="0 0 40 40">
+      <g stroke="#1a1a1a" stroke-width="3.2" stroke-linecap="round">${lineas}</g>
+      <g stroke="#bcc4cc" stroke-width="2.2" stroke-linecap="round">${lineas}</g></svg>`;
+  },
 };
 
 // Devuelve el SVG del estado. Si hay precipitación, prima sobre el cielo.
@@ -127,6 +139,8 @@ export function flechaViento(dir) {
   const g = gradosDeRumbo(dir);
   if (g == null) return "";
   const rot = (g + 180) % 360;
+  // Punta mas ancha y contorno oscuro, para que se lea a simple vista.
   return `<svg viewBox="0 0 24 24" style="transform:rotate(${rot}deg)">
-    <path d="M12 2 L17 20 L12 15 L7 20 Z" fill="currentColor"/></svg>`;
+    <path d="M12 1 L19 21 L12 16 L5 21 Z" fill="currentColor"
+      stroke="#1a1a1a" stroke-width="1.1" stroke-linejoin="round"/></svg>`;
 }

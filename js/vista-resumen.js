@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260720233000";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260720233000";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260720233000";
+import { esc, getModelRunInfo } from "./utils.js?v=20260721001500";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260721001500";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260721001500";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
@@ -75,6 +75,7 @@ function filaBloque(b, idx) {
     ["Sensacion termica", b.sensacionRaw],
     ["Viento sostenido", v.sostenido],
     ["Rachas maximas", v.rachas],
+
     ["Direccion", v.dirLarga],
     ["Equivalencia km/h", v.kmh],
     ["Riesgo por viento", RIESGO_TXT[b.riesgoViento] || "--"],
@@ -138,9 +139,13 @@ function parseVientoDet(raw) {
   const kmh = nums.length
     ? nums.map((n) => Math.round(n * 1.852)).join("/") + " km/h"
     : "--";
+  // El viento sostenido se muestra con su direccion delante,
+  // en el mismo formato que usa la hoja: "NW 6/12 KT".
+  const sostConDir = sost ? (dir ? dir + " " + sost : sost) : "--";
   return {
-    sostenido: sost || "--",
-    rachas: r ? r[1] + " kt" : "Sin rachas destacadas",
+    sostenido: sostConDir,
+    // Cadena vacia cuando no hay rachas: el filtro omite el campo.
+    rachas: r ? r[1] + " KT" : "",
     dirLarga: RUMBO_LARGO[dir] || dir || "--",
     kmh,
   };
