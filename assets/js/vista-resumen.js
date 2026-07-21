@@ -77,9 +77,8 @@ function filaBloque(b) {
     </tr>`;
 }
 
-// Extrae un valor único de temperatura desde el texto crudo.
-// "-12°C / -6°C" → "-6°C" (se toma el extremo más representativo:
-// el máximo para el aire, que es el mismo criterio en ambas columnas).
+// Reduce el texto crudo de temperatura a un solo valor.
+// "-12°C / -6°C" → "-6°" · "-8°C" → "-8°"
 function valorTemp(raw) {
   const nums = String(raw || "").match(/-?\d+(?:[.,]\d+)?/g);
   if (!nums) return "--";

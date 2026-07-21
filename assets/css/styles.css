@@ -466,19 +466,7 @@ header {
   .resumen-tira { grid-auto-columns: minmax(88px, 1fr); }
   .resumen-dia { padding: 10px 5px; }
   .rd-icono { width: 38px; height: 38px; }
-  .b6-panel { padding: 14px; }
-  .b6-header { display: none; }
-  .b6-fila {
-    grid-template-columns: 54px 30px 1fr 1fr; grid-template-areas:
-      "hora icono nubes vis" "hora icono viento viento" "hora icono temp sens";
-    row-gap: 3px; padding: 10px;
-  }
-  .b6-hora { grid-area: hora; }
-  .b6-icono { grid-area: icono; }
-  .b6-col:nth-of-type(3) { grid-area: vis; font-size: 0.72rem; }
-  .b6-viento-col { grid-area: viento; font-size: 0.72rem; }
-  .b6-col.t-aire { grid-area: temp; font-size: 0.75rem; }
-  .b6-col.t-sens { grid-area: sens; font-size: 0.75rem; }
+
 }
 
 /* ── Línea de modelos al pie del detalle cada 3 h ── */
@@ -1075,7 +1063,6 @@ header {
 }
 
 @media (max-width: 768px) {
-  .b6-tabla { min-width: 0; }
   .b6-tabla thead th { font-size: 0.6rem; padding: 0 8px 6px; }
   .b6-tabla .b6-fila td { padding: 10px 8px; font-size: 0.78rem; }
 }
@@ -1090,50 +1077,63 @@ header {
 
 /* Refuerzo: asegura que el detalle 3h se comporte como tabla y
    desborde en móvil, por encima de cualquier regla previa. */
-.b6-panel .b6-scroll { overflow-x: visible !important; }
-.b6-panel .b6-tabla { min-width: 0 !important; display: table !important; }
-.b6-panel .b6-tabla thead { display: table-header-group !important; }
-.b6-panel .b6-tabla tbody { display: table-row-group !important; }
-.b6-panel .b6-tabla tr { display: table-row !important; }
-.b6-panel .b6-tabla td,
-.b6-panel .b6-tabla th { display: table-cell !important; }
 
-@media (max-width: 768px) {
-  .b6-panel .b6-header { display: table-row !important; }
 }
 
 
 /* ════════════════════════════════════════════════════════════════
-   DETALLE 3 H COMPACTO — 5 columnas, cabe completo sin scroll.
+   DETALLE CADA 3 HORAS — bloque único y definitivo.
+   Sustituye a todas las reglas anteriores de .b6-* dispersas.
+   Cinco columnas, ancho fijo porcentual, sin scroll horizontal.
    ════════════════════════════════════════════════════════════════ */
-.b6-termica { white-space: nowrap; font-weight: 800; }
-.b6-termica .t-aire { color: #0000ff; }
-.b6-termica .t-sens { color: #ff0000; margin-left: 6px; }
 
-.b6-panel .b6-scroll { overflow-x: visible !important; }
-.b6-panel .b6-tabla {
-  min-width: 0 !important;
-  width: 100% !important;
-  table-layout: fixed !important;
+/* La tabla siempre se ajusta al contenedor: nunca impone ancho propio. */
+.b6-panel .b6-scroll {
+  overflow-x: visible;
+  overflow-y: visible;
 }
+.b6-panel .b6-tabla {
+  min-width: 0;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0 3px;
+  display: table;
+}
+.b6-panel .b6-tabla thead { display: table-header-group; }
+.b6-panel .b6-tabla tbody { display: table-row-group; }
+.b6-panel .b6-tabla tr    { display: table-row; }
 .b6-panel .b6-tabla td,
-.b6-panel .b6-tabla th { overflow-wrap: anywhere; white-space: normal; }
+.b6-panel .b6-tabla th {
+  display: table-cell;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.b6-panel .b6-header { display: table-row; }
 
-/* Reparto de anchos: horario · icono · visibilidad · viento · térmica */
+/* Reparto de anchos: hora · icono · visibilidad · viento · térmica */
 .b6-panel .b6-tabla th:nth-child(1), .b6-panel .b6-tabla td:nth-child(1) { width: 15%; }
-.b6-panel .b6-tabla th:nth-child(2), .b6-panel .b6-tabla td:nth-child(2) { width: 10%; }
-.b6-panel .b6-tabla th:nth-child(3), .b6-panel .b6-tabla td:nth-child(3) { width: 27%; }
+.b6-panel .b6-tabla th:nth-child(2), .b6-panel .b6-tabla td:nth-child(2) { width: 11%; }
+.b6-panel .b6-tabla th:nth-child(3), .b6-panel .b6-tabla td:nth-child(3) { width: 26%; }
 .b6-panel .b6-tabla th:nth-child(4), .b6-panel .b6-tabla td:nth-child(4) { width: 26%; }
 .b6-panel .b6-tabla th:nth-child(5), .b6-panel .b6-tabla td:nth-child(5) { width: 22%; }
+
+/* Celda térmica: aire y sensación juntos. */
+.b6-termica { font-weight: 800; line-height: 1.3; }
+.b6-termica .t-aire { color: #0000ff; }
+.b6-termica .t-sens { color: #ff0000; margin-left: 6px; }
 
 @media (max-width: 768px) {
   .b6-panel { padding: 12px 6px; }
   .b6-panel .b6-tabla thead th      { font-size: 0.52rem; padding: 0 2px 6px; letter-spacing: 0; }
   .b6-panel .b6-tabla .b6-fila td   { padding: 8px 2px; font-size: 0.64rem; line-height: 1.25; }
   .b6-panel .b6-tabla .b6-hora      { font-size: 0.64rem; }
+  .b6-panel .b6-tabla .b6-icono     { width: auto; height: auto; }
   .b6-panel .b6-tabla .b6-icono svg { width: 24px; height: 24px; }
   .b6-panel .b6-viento-col svg      { width: 10px; height: 10px; }
-  .b6-panel .b6-termica             { white-space: normal; }
+  .b6-panel .b6-viento-col .rd-flecha { margin-right: 2px; }
   .b6-panel .b6-termica .t-sens     { margin-left: 0; display: block; }
-  .b6-panel .b6-fila                { border-left-width: 4px; }
+  .b6-panel .b6-fila { border-left-width: 4px; }
+  .b6-panel .b6-titulo { font-size: 0.85rem; }
 }
