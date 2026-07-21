@@ -3,10 +3,10 @@
 //  tarjetas por día y abre el detalle horario (Open-Meteo).
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG, getCSVUrl } from "./config.js?v=20260720215000";
-import { esc } from "./utils.js?v=20260720215000";
-import { abrirDetalleHorario } from "./graficos.js?v=20260720215000";
-import { construirResumen, initZoomB6 } from "./vista-resumen.js?v=20260720215000";
+import { CONFIG, getCSVUrl } from "./config.js?v=20260720223000";
+import { esc } from "./utils.js?v=20260720223000";
+import { abrirDetalleHorario } from "./graficos.js?v=20260720223000";
+import { construirResumen, initAcordeonB6 } from "./vista-resumen.js?v=20260720223000";
 
 let sectorActivo = null;
 let filasPronostico = [];
@@ -82,8 +82,8 @@ function renderResumen(diaSeleccionado) {
     abrirDetalleHorario(parseInt(idx), dia);
   });
 
-  // Zoom propio de la tabla de 3 h (independiente del zoom del navegador).
-  initZoomB6();
+  // Filas desplegables del detalle de 3 h.
+  initAcordeonB6();
 }
 
 // ── Carga del sector activo desde Google Sheets ──────────────────

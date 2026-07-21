@@ -472,13 +472,7 @@ header {
       "hora icono nubes vis" "hora icono viento viento" "hora icono temp sens";
     row-gap: 3px; padding: 10px;
   }
-  .b6-hora { grid-area: hora; }
-  .b6-icono { grid-area: icono; }
-  .b6-col:nth-of-type(3) { grid-area: nubes; font-size: 0.72rem; }
-  .b6-col:nth-of-type(4) { grid-area: vis; font-size: 0.72rem; }
-  .b6-viento-col { grid-area: viento; font-size: 0.72rem; }
-  .b6-col.t-aire { grid-area: temp; font-size: 0.75rem; }
-  .b6-col.t-sens { grid-area: sens; font-size: 0.75rem; }
+
 }
 
 /* ── Línea de modelos al pie del detalle cada 3 h ── */
@@ -703,7 +697,7 @@ header {
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
-    touch-action: auto;
+    touch-action: pan-x;
   }
   .resumen-wrap { overflow: visible !important; max-width: 100%; }
 }
@@ -713,7 +707,7 @@ header {
   .mt-scroll {
     overflow-x: scroll !important;
     max-width: 100%;
-    touch-action: auto;
+    touch-action: pan-x;
   }
   .meteotabla-section { overflow: visible !important; max-width: 100%; }
 }
@@ -762,13 +756,13 @@ header {
 
   /* ── Tira de días: se asegura el gesto horizontal ── */
   .resumen-tira {
-    touch-action: auto !important;
+    touch-action: pan-x !important;
     overscroll-behavior-x: contain;
   }
-  .resumen-dia { touch-action: auto; }
+  .resumen-dia { touch-action: manipulation; }
 
   .mt-scroll {
-    touch-action: auto !important;
+    touch-action: pan-x !important;
     overscroll-behavior-x: contain;
   }
 }
@@ -843,7 +837,7 @@ header {
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
-    touch-action: auto !important;
+    touch-action: pan-x !important;
     overscroll-behavior-x: contain !important;
     scroll-snap-type: x mandatory;
   }
@@ -859,7 +853,7 @@ header {
     min-width: 0 !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    touch-action: auto !important;
+    touch-action: pan-x !important;
     overscroll-behavior-x: contain !important;
   }
 }
@@ -945,7 +939,7 @@ header {
 @media (max-width: 768px) {
   .resumen-dia { width: 104px; padding: 10px 5px; }
   .resumen-tabla { border-spacing: 6px 0; }
-  .resumen-scroll { touch-action: auto; }
+  .resumen-scroll { touch-action: pan-x; }
 }
 
 /* Neutraliza las reglas de grid anteriores: el contenedor
@@ -1078,7 +1072,7 @@ header {
   .b6-tabla { min-width: 600px; }
   .b6-tabla thead th { font-size: 0.6rem; padding: 0 8px 6px; }
   .b6-tabla .b6-fila td { padding: 10px 8px; font-size: 0.78rem; }
-  .b6-scroll { touch-action: auto; }
+  .b6-scroll { touch-action: pan-x; }
 }
 
 /* Neutraliza asignaciones de grid-area residuales del layout anterior. */
@@ -1106,60 +1100,75 @@ header {
 
 
 /* ════════════════════════════════════════════════════════════════
-   ZOOM TÁCTIL — el gesto de pellizco debe llegar a la página y no
-   quedar capturado por los contenedores con desplazamiento propio.
-   La presentación de las tablas no cambia: solo se libera el gesto.
+   DETALLE CADA 3 HORAS — filas desplegables.
+   Cada fila muestra hora, ícono, temperatura y viento; el resto de
+   las variables se despliega al tocarla. El ancho se adapta siempre
+   a la pantalla, sin desplazamiento lateral.
    ════════════════════════════════════════════════════════════════ */
-html, body { touch-action: auto !important; }
-.b6-scroll,
-.b6-panel,
-.b6-tabla,
-.resumen-scroll,
-.resumen-tira-cont,
-.grid-container,
-.meteotabla-section,
-.main-content { touch-action: auto !important; }
+.b6-lista { display: flex; flex-direction: column; gap: 4px; }
 
-
-/* ════════════════════════════════════════════════════════════════
-   ZOOM PROPIO DE LA TABLA DE 3 HORAS
-   Escala únicamente el panel de detalle mediante transform, sin
-   tocar el resto de la interfaz. La capa compensa su ancho para
-   que al alejar se aproveche todo el espacio disponible.
-   ════════════════════════════════════════════════════════════════ */
-.b6-acciones { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-.b6-zoom {
-  display: inline-flex; align-items: center; gap: 2px;
-  background: #eef2f7; border: 1px solid #d7e0ea;
-  border-radius: 9px; padding: 2px;
-}
-.b6-zoom-btn {
-  width: 30px; height: 28px; border: none; background: #fff;
-  color: var(--navy, #1a2a44); font-size: 1.05rem; font-weight: 900;
-  line-height: 1; border-radius: 7px; cursor: pointer; transition: 0.15s;
-}
-.b6-zoom-btn:hover  { background: var(--navy, #1a2a44); color: #fff; }
-.b6-zoom-btn:active { transform: scale(0.92); }
-.b6-zoom-val {
-  min-width: 42px; text-align: center; font-size: 0.68rem;
-  font-weight: 800; color: #4a5568; user-select: none;
+.b6-lista .b6-fila {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border-bottom: none;
 }
 
-/* Capa escalable: el origen a la izquierda evita que la tabla se
-   despegue del borde al reducir. */
-.b6-zoom-capa {
-  transform-origin: top left;
-  transition: transform 0.15s ease;
-  will-change: transform;
+.b6-cab {
+  display: grid;
+  grid-template-columns: 4.2rem 2.4rem 1fr auto 1.1rem;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
 }
 
-/* Al reducir la escala la tabla ocupa menos alto real: se recorta
-   el espacio sobrante del contenedor. */
-.b6-scroll { overflow-x: auto; }
+.b6-cab .b6-hora  { font-weight: 900; color: var(--navy, #1a2a44); font-size: 0.8rem; }
+.b6-cab .b6-icono { width: 34px; height: 34px; }
+.b6-cab .b6-icono svg { width: 100%; height: 100%; }
+.b6-cab .b6-temp  { font-size: 1.05rem; font-weight: 900; color: #0000ff; }
+
+.b6-viento-res { display: flex; align-items: center; gap: 6px; justify-self: end; }
+.b6-viento-res .rd-flecha svg { width: 15px; height: 15px; }
+.b6-viento-txt { display: flex; flex-direction: column; line-height: 1.15; }
+.b6-viento-txt b     { font-size: 0.72rem; color: var(--navy, #1a2a44); font-weight: 800; }
+.b6-viento-txt small { font-size: 0.66rem; color: #4a5568; font-weight: 700; }
+
+.b6-chev {
+  font-size: 1.1rem; color: #7a8ba0; text-align: center;
+  transition: transform 0.2s ease; line-height: 1;
+}
+.b6-fila.abierta .b6-chev { transform: rotate(180deg); }
+
+/* Panel desplegado */
+.b6-det { padding: 2px 12px 12px; }
+.b6-det-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px 16px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.09);
+}
+.b6-det-item { display: flex; flex-direction: column; gap: 1px; }
+.b6-det-k {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.4px;
+  color: #64748b; font-weight: 800;
+}
+.b6-det-v { font-size: 0.8rem; font-weight: 700; color: #1f2937; overflow-wrap: anywhere; }
 
 @media (max-width: 768px) {
-  .b6-acciones { width: 100%; justify-content: space-between; }
-  .b6-zoom-btn { width: 34px; height: 32px; font-size: 1.15rem; }
-  .b6-zoom-val { font-size: 0.64rem; min-width: 38px; }
+  .b6-panel { padding: 14px 10px; }
+  .b6-cab { grid-template-columns: 3.6rem 2rem 1fr auto 1rem; gap: 6px; padding: 10px 8px; }
+  .b6-cab .b6-hora  { font-size: 0.72rem; }
+  .b6-cab .b6-icono { width: 30px; height: 30px; }
+  .b6-cab .b6-temp  { font-size: 0.95rem; }
+  .b6-det-grid { grid-template-columns: 1fr 1fr; gap: 8px 12px; }
 }

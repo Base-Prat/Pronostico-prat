@@ -3,13 +3,13 @@
 //  estación en vivo, pronóstico y calculadora.
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG, SECTORES, GRUPO_LABELS, ENLACES_GLACIOLOGICOS } from "./config.js?v=20260720215000";
-import { getModelRunInfo, esc } from "./utils.js?v=20260720215000";
-import { actualizarEstacion } from "./estacion.js?v=20260720215000";
-import { setSectorActivo } from "./pronostico.js?v=20260720215000";
-import { cerrarModal } from "./graficos.js?v=20260720215000";
-import { initCalculadora } from "./calculadora.js?v=20260720215000";
-import { cargarMeteotabla } from "./meteotabla.js?v=20260720215000";
+import { CONFIG, SECTORES, GRUPO_LABELS, ENLACES_GLACIOLOGICOS } from "./config.js?v=20260720223000";
+import { getModelRunInfo, esc } from "./utils.js?v=20260720223000";
+import { actualizarEstacion } from "./estacion.js?v=20260720223000";
+import { setSectorActivo } from "./pronostico.js?v=20260720223000";
+import { cerrarModal } from "./graficos.js?v=20260720223000";
+import { initCalculadora } from "./calculadora.js?v=20260720223000";
+import { cargarMeteotabla } from "./meteotabla.js?v=20260720223000";
 
 // ── Enlaces del sidebar (fuentes externas oficiales) ─────────────
 function initEnlacesSidebar() {
@@ -96,11 +96,11 @@ function verVersionEscritorio() {
 
   if (activo) {
     // Ancho fijo de escritorio, pero sin bloquear el zoom del usuario.
-    vp?.setAttribute("content", "width=1280, initial-scale=0.45, minimum-scale=0.25, maximum-scale=5.0, user-scalable=yes");
+    vp?.setAttribute("content", "width=1280, initial-scale=0.45");
     if (btn) btn.textContent = "📱 Ver versión móvil";
     document.querySelector(".hamburger-btn")?.style.setProperty("display", "none");
   } else {
-    vp?.setAttribute("content", "width=device-width, initial-scale=1.0, minimum-scale=0.25, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover");
+    vp?.setAttribute("content", "width=device-width, initial-scale=1.0, viewport-fit=cover");
     if (btn) btn.textContent = "🖥️ Ver versión escritorio";
     document.querySelector(".hamburger-btn")?.style.removeProperty("display");
   }

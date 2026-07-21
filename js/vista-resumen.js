@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260720215000";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260720215000";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260720215000";
+import { esc, getModelRunInfo } from "./utils.js?v=20260720223000";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260720223000";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260720223000";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
@@ -58,22 +58,66 @@ const RIESGO_CLASE = {
   peligro: "riesgo-peligro",
 };
 
-// ── Fila del detalle cada 3 h — columnas crudas + color por viento ─
-function filaBloque(b) {
+// ── Fila desplegable del detalle cada 3 h ────────────────────────
+// Visible siempre: hora, ícono, temperatura y viento. El resto de
+// las variables aparece al tocar la fila, de modo que el ancho nunca
+// excede la pantalla y no hace falta desplazamiento lateral.
+function filaBloque(b, idx) {
   const claseRiesgo = RIESGO_CLASE[b.riesgoViento] || "";
+  const dir = vientoDir(b.vientoRaw);
+
+  const detalles = [
+    ["Nubosidad", b.nubesRaw],
+    ["Visibilidad", b.visibilidadRaw],
+    ["Viento", b.vientoRaw],
+    ["Temperatura del aire", b.tempRaw],
+    ["Sensación térmica", b.sensacionRaw],
+  ]
+    .filter(([, v]) => v && String(v).trim())
+    .map(([k, v]) => `
+        <div class="b6-det-item">
+          <span class="b6-det-k">${esc(k)}</span>
+          <span class="b6-det-v">${esc(v)}</span>
+        </div>`)
+    .join("");
+
   return `
-    <tr class="b6-fila ${claseRiesgo}">
-      <td class="b6-hora">${esc(b.etiqueta)}</td>
-      <td class="b6-icono">${iconoTiempo(b.cielo, b.precip, b.intensidad)}</td>
-      <td class="b6-col">${esc(b.nubesRaw) || "—"}</td>
-      <td class="b6-col">${esc(b.visibilidadRaw) || "—"}</td>
-      <td class="b6-col b6-viento-col">
-        <span class="rd-flecha">${flechaViento(vientoDir(b.vientoRaw))}</span>
-        ${esc(b.vientoRaw) || "—"}
-      </td>
-      <td class="b6-col t-aire">${esc(b.tempRaw) || "—"}</td>
-      <td class="b6-col t-sens">${esc(b.sensacionRaw) || "—"}</td>
-    </tr>`;
+    <div class="b6-fila ${claseRiesgo}" data-fila="${idx}">
+      <button class="b6-cab" aria-expanded="false" aria-controls="b6-det-${idx}">
+        <span class="b6-hora">${esc(b.etiqueta)}</span>
+        <span class="b6-icono">${iconoTiempo(b.cielo, b.precip, b.intensidad)}</span>
+        <span class="b6-temp">${esc(valorTemp(b.tempRaw))}</span>
+        <span class="b6-viento-res">
+          <span class="rd-flecha">${flechaViento(dir)}</span>
+          <span class="b6-viento-txt">
+            <b>${esc(dir || "--")}</b>
+            <small>${esc(resumenViento(b.vientoRaw))}</small>
+          </span>
+        </span>
+        <span class="b6-chev" aria-hidden="true">⌄</span>
+      </button>
+      <div class="b6-det" id="b6-det-${idx}" hidden>
+        <div class="b6-det-grid">${detalles}</div>
+      </div>
+    </div>`;
+}
+
+// Reduce el viento crudo a su parte numérica ("W/NW 20/30 KT" → "20/30").
+function resumenViento(raw) {
+  const t = String(raw || "");
+  const sost = t.split(/rachas?/i)[0].replace(/^[A-Za-zÑ/]+\s*/, "").trim();
+  const r = t.match(/rachas?\s*(\d+)/i);
+  const base = sost || "--";
+  return r ? `${base} (R ${r[1]})` : base;
+}
+
+// Reduce el texto crudo de temperatura a un solo valor.
+// "-12°C / -6°C" → "-6°" · "-8°C" → "-8°"
+function valorTemp(raw) {
+  const nums = String(raw || "").match(/-?\d+(?:[.,]\d+)?/g);
+  if (!nums) return "--";
+  const vals = nums.map((n) => parseFloat(n.replace(",", ".")));
+  return `${Math.max(...vals)}°`;
 }
 
 // Extrae solo la dirección textual del viento crudo para la flecha.
@@ -96,7 +140,7 @@ export function construirResumen(filas, diaSeleccionado) {
     .join("");
 
   // Tramos de 3 h del día activo.
-  const bloques = tramos3h(activo.tramos).map(filaBloque).join("");
+  const bloques = tramos3h(activo.tramos).map((b, i) => filaBloque(b, i)).join("");
 
   const html = `
     <div class="resumen-wrap">
@@ -111,29 +155,11 @@ export function construirResumen(filas, diaSeleccionado) {
       <div class="b6-panel">
         <div class="b6-titulo">
           <span>Detalle cada 3 horas — <b>${esc(activo.dia)}</b></span>
-          <div class="b6-acciones">
-            <div class="b6-zoom" role="group" aria-label="Zoom de la tabla">
-              <button class="b6-zoom-btn" id="b6-zoom-out" aria-label="Alejar tabla">−</button>
-              <span class="b6-zoom-val" id="b6-zoom-val">100%</span>
-              <button class="b6-zoom-btn" id="b6-zoom-in" aria-label="Acercar tabla">+</button>
-            </div>
-            <button class="b6-link" id="btn-horario" data-idx="${idxSel}" data-dia="${esc(activo.dia)}">
-              📊 Ver detalle por hora
-            </button>
-          </div>
+          <button class="b6-link" id="btn-horario" data-idx="${idxSel}" data-dia="${esc(activo.dia)}">
+            📊 Ver detalle por hora
+          </button>
         </div>
-        <div class="b6-scroll">
-          <div class="b6-zoom-capa" id="b6-zoom-capa">
-          <table class="b6-tabla">
-            <thead>
-              <tr class="b6-header">
-                <th>Horario</th><th></th><th>Nubes</th><th>Visibilidad</th><th>Viento</th><th>Temp</th><th>Sensación</th>
-              </tr>
-            </thead>
-            <tbody>${bloques}</tbody>
-          </table>
-          </div>
-        </div>
+        <div class="b6-lista">${bloques}</div>
         <div class="b6-modelos">
           Elaboración propia sobre modelos <b>${esc(getModelRunInfo().runModelo)}</b>
           · corrida ${esc(getModelRunInfo().runHoraUTC)} UTC
@@ -145,31 +171,29 @@ export function construirResumen(filas, diaSeleccionado) {
 }
 
 
-// ── Zoom independiente de la tabla de 3 h ────────────────────────
-// Escala solo el panel de detalle, sin afectar al resto de la página.
-// El nivel elegido se conserva al cambiar de día o de sector.
-let escalaB6 = 1;
-try {
-  const guardada = parseFloat(localStorage.getItem("b6-escala"));
-  if (guardada > 0) escalaB6 = guardada;
-} catch (e) { /* almacenamiento no disponible (modo incógnito) */ }
+// ── Acordeón del detalle de 3 h ──────────────────────────────────
+// Una sola fila abierta a la vez, para mantener la vista corta.
+export function initAcordeonB6() {
+  const lista = document.querySelector(".b6-lista");
+  if (!lista) return;
 
-export function aplicarZoomB6() {
-  const capa = document.getElementById("b6-zoom-capa");
-  const val = document.getElementById("b6-zoom-val");
-  if (!capa) return;
-  capa.style.transform = `scale(${escalaB6})`;
-  capa.style.width = `${100 / escalaB6}%`;
-  if (val) val.textContent = `${Math.round(escalaB6 * 100)}%`;
-}
+  lista.querySelectorAll(".b6-cab").forEach((cab) => {
+    cab.addEventListener("click", () => {
+      const fila = cab.closest(".b6-fila");
+      const det = fila.querySelector(".b6-det");
+      const abierta = fila.classList.contains("abierta");
 
-export function initZoomB6() {
-  const ajustar = (paso) => {
-    escalaB6 = Math.min(2, Math.max(0.5, Math.round((escalaB6 + paso) * 100) / 100));
-    try { localStorage.setItem("b6-escala", escalaB6); } catch (e) { /* sin persistencia */ }
-    aplicarZoomB6();
-  };
-  document.getElementById("b6-zoom-in")?.addEventListener("click", () => ajustar(0.1));
-  document.getElementById("b6-zoom-out")?.addEventListener("click", () => ajustar(-0.1));
-  aplicarZoomB6();
+      lista.querySelectorAll(".b6-fila.abierta").forEach((f) => {
+        f.classList.remove("abierta");
+        f.querySelector(".b6-det")?.setAttribute("hidden", "");
+        f.querySelector(".b6-cab")?.setAttribute("aria-expanded", "false");
+      });
+
+      if (!abierta) {
+        fila.classList.add("abierta");
+        det.removeAttribute("hidden");
+        cab.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
 }
