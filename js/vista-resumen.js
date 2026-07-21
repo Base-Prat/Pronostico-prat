@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260721001500";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260721001500";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260721001500";
+import { esc, getModelRunInfo } from "./utils.js?v=20260721010000";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260721010000";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260721010000";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
@@ -67,24 +67,22 @@ function filaBloque(b, idx) {
   const dir = vientoDir(b.vientoRaw);
   const v = parseVientoDet(b.vientoRaw);
 
+  // Cada campo lleva una clase opcional para colorear su valor.
   const detalles = [
     ["Nubosidad", b.nubesRaw],
     ["Visibilidad", visKm(b.visibilidadRaw)],
     ["Fenomeno", fenomenoTxt(b.visibilidadRaw)],
-    ["Temperatura del aire", b.tempRaw],
-    ["Sensacion termica", b.sensacionRaw],
+    ["Temperatura del aire", b.tempRaw, "b6-v-aire"],
+    ["Sensacion termica", b.sensacionRaw, "b6-v-sens"],
     ["Viento sostenido", v.sostenido],
     ["Rachas maximas", v.rachas],
-
-    ["Direccion", v.dirLarga],
-    ["Equivalencia km/h", v.kmh],
     ["Riesgo por viento", RIESGO_TXT[b.riesgoViento] || "--"],
   ]
     .filter(([, val]) => val && String(val).trim())
-    .map(([k, val]) => `
+    .map(([k, val, clase]) => `
         <div class="b6-det-item">
           <span class="b6-det-k">${esc(k)}</span>
-          <span class="b6-det-v">${esc(val)}</span>
+          <span class="b6-det-v ${clase || ""}">${esc(val)}</span>
         </div>`)
     .join("");
 
@@ -119,26 +117,12 @@ const RIESGO_TXT = {
   peligro: "Peligro (30 kt o mas)",
 };
 
-// Nombres completos de los rumbos, para el panel desplegado.
-const RUMBO_LARGO = {
-  N: "Norte", NORTE: "Norte", "N/NE": "Norte-noreste", NE: "Noreste",
-  "E/NE": "Este-noreste", E: "Este", ESTE: "Este", "E/SE": "Este-sureste",
-  SE: "Sureste", "S/SE": "Sur-sureste", S: "Sur", SUR: "Sur",
-  "S/SW": "Sur-suroeste", SW: "Suroeste", "SW/W": "Suroeste-oeste",
-  W: "Oeste", OESTE: "Oeste", WESTE: "Oeste", "W/NW": "Oeste-noroeste",
-  NW: "Noroeste", "NW/N": "Noroeste-norte", "N/NW": "Norte-noroeste",
-};
-
 // Descompone el viento crudo en sus partes, para el desplegable.
 function parseVientoDet(raw) {
   const t = String(raw || "");
   const dir = (t.match(/^[A-Za-z\u00d1/]+/) || [""])[0].trim().toUpperCase();
   const sost = t.split(/rachas?/i)[0].replace(/^[A-Za-z\u00d1/]+\s*/, "").trim();
   const r = t.match(/rachas?\s*(\d+)/i);
-  const nums = (sost.match(/\d+/g) || []).map(Number);
-  const kmh = nums.length
-    ? nums.map((n) => Math.round(n * 1.852)).join("/") + " km/h"
-    : "--";
   // El viento sostenido se muestra con su direccion delante,
   // en el mismo formato que usa la hoja: "NW 6/12 KT".
   const sostConDir = sost ? (dir ? dir + " " + sost : sost) : "--";
@@ -146,8 +130,6 @@ function parseVientoDet(raw) {
     sostenido: sostConDir,
     // Cadena vacia cuando no hay rachas: el filtro omite el campo.
     rachas: r ? r[1] + " KT" : "",
-    dirLarga: RUMBO_LARGO[dir] || dir || "--",
-    kmh,
   };
 }
 

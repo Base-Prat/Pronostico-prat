@@ -1175,6 +1175,11 @@ header {
 }
 .b6-det-v { font-size: 0.85rem; font-weight: 800; color: #16202c; overflow-wrap: anywhere; }
 
+/* Temperatura del aire en azul y sensacion termica en rojo, con el
+   mismo criterio cromatico que la fila cerrada. */
+.b6-det-v.b6-v-aire { color: #0000ff; }
+.b6-det-v.b6-v-sens { color: #ff0000; }
+
 @media (max-width: 768px) {
   .b6-panel { padding: 14px 8px; }
   .b6-cab {

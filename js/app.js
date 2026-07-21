@@ -3,13 +3,13 @@
 //  estación en vivo, pronóstico y calculadora.
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG, SECTORES, GRUPO_LABELS, ENLACES_GLACIOLOGICOS } from "./config.js?v=20260721001500";
-import { getModelRunInfo, esc } from "./utils.js?v=20260721001500";
-import { actualizarEstacion } from "./estacion.js?v=20260721001500";
-import { setSectorActivo } from "./pronostico.js?v=20260721001500";
-import { cerrarModal } from "./graficos.js?v=20260721001500";
-import { initCalculadora } from "./calculadora.js?v=20260721001500";
-import { cargarMeteotabla } from "./meteotabla.js?v=20260721001500";
+import { CONFIG, SECTORES, GRUPO_LABELS, ENLACES_GLACIOLOGICOS } from "./config.js?v=20260721010000";
+import { getModelRunInfo, esc } from "./utils.js?v=20260721010000";
+import { actualizarEstacion } from "./estacion.js?v=20260721010000";
+import { setSectorActivo } from "./pronostico.js?v=20260721010000";
+import { cerrarModal } from "./graficos.js?v=20260721010000";
+import { initCalculadora } from "./calculadora.js?v=20260721010000";
+import { cargarMeteotabla } from "./meteotabla.js?v=20260721010000";
 
 // ── Enlaces del sidebar (fuentes externas oficiales) ─────────────
 function initEnlacesSidebar() {

@@ -6,8 +6,8 @@
 //  interpolación, son valores del modelo tal cual).
 // ════════════════════════════════════════════════════════════════
 
-import { CONFIG, CATABATICO, CRITERIO_MAR } from "./config.js?v=20260721001500";
-import { fetchConTimeout, gradosARumbo } from "./utils.js?v=20260721001500";
+import { CONFIG, CATABATICO, CRITERIO_MAR } from "./config.js?v=20260721010000";
+import { fetchConTimeout, gradosARumbo } from "./utils.js?v=20260721010000";
 
 // ── Corrección catabática ────────────────────────────────────────
 // Devuelve true si en el paso i se cumplen las tres condiciones:
