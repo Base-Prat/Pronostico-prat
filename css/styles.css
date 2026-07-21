@@ -1119,3 +1119,47 @@ html, body { touch-action: auto !important; }
 .grid-container,
 .meteotabla-section,
 .main-content { touch-action: auto !important; }
+
+
+/* ════════════════════════════════════════════════════════════════
+   ZOOM PROPIO DE LA TABLA DE 3 HORAS
+   Escala únicamente el panel de detalle mediante transform, sin
+   tocar el resto de la interfaz. La capa compensa su ancho para
+   que al alejar se aproveche todo el espacio disponible.
+   ════════════════════════════════════════════════════════════════ */
+.b6-acciones { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.b6-zoom {
+  display: inline-flex; align-items: center; gap: 2px;
+  background: #eef2f7; border: 1px solid #d7e0ea;
+  border-radius: 9px; padding: 2px;
+}
+.b6-zoom-btn {
+  width: 30px; height: 28px; border: none; background: #fff;
+  color: var(--navy, #1a2a44); font-size: 1.05rem; font-weight: 900;
+  line-height: 1; border-radius: 7px; cursor: pointer; transition: 0.15s;
+}
+.b6-zoom-btn:hover  { background: var(--navy, #1a2a44); color: #fff; }
+.b6-zoom-btn:active { transform: scale(0.92); }
+.b6-zoom-val {
+  min-width: 42px; text-align: center; font-size: 0.68rem;
+  font-weight: 800; color: #4a5568; user-select: none;
+}
+
+/* Capa escalable: el origen a la izquierda evita que la tabla se
+   despegue del borde al reducir. */
+.b6-zoom-capa {
+  transform-origin: top left;
+  transition: transform 0.15s ease;
+  will-change: transform;
+}
+
+/* Al reducir la escala la tabla ocupa menos alto real: se recorta
+   el espacio sobrante del contenedor. */
+.b6-scroll { overflow-x: auto; }
+
+@media (max-width: 768px) {
+  .b6-acciones { width: 100%; justify-content: space-between; }
+  .b6-zoom-btn { width: 34px; height: 32px; font-size: 1.15rem; }
+  .b6-zoom-val { font-size: 0.64rem; min-width: 38px; }
+}

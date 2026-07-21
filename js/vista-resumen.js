@@ -111,11 +111,19 @@ export function construirResumen(filas, diaSeleccionado) {
       <div class="b6-panel">
         <div class="b6-titulo">
           <span>Detalle cada 3 horas — <b>${esc(activo.dia)}</b></span>
-          <button class="b6-link" id="btn-horario" data-idx="${idxSel}" data-dia="${esc(activo.dia)}">
-            📊 Ver detalle por hora
-          </button>
+          <div class="b6-acciones">
+            <div class="b6-zoom" role="group" aria-label="Zoom de la tabla">
+              <button class="b6-zoom-btn" id="b6-zoom-out" aria-label="Alejar tabla">−</button>
+              <span class="b6-zoom-val" id="b6-zoom-val">100%</span>
+              <button class="b6-zoom-btn" id="b6-zoom-in" aria-label="Acercar tabla">+</button>
+            </div>
+            <button class="b6-link" id="btn-horario" data-idx="${idxSel}" data-dia="${esc(activo.dia)}">
+              📊 Ver detalle por hora
+            </button>
+          </div>
         </div>
         <div class="b6-scroll">
+          <div class="b6-zoom-capa" id="b6-zoom-capa">
           <table class="b6-tabla">
             <thead>
               <tr class="b6-header">
@@ -124,6 +132,7 @@ export function construirResumen(filas, diaSeleccionado) {
             </thead>
             <tbody>${bloques}</tbody>
           </table>
+          </div>
         </div>
         <div class="b6-modelos">
           Elaboración propia sobre modelos <b>${esc(getModelRunInfo().runModelo)}</b>
@@ -133,4 +142,34 @@ export function construirResumen(filas, diaSeleccionado) {
     </div>`;
 
   return { html, dias, idxSel };
+}
+
+
+// ── Zoom independiente de la tabla de 3 h ────────────────────────
+// Escala solo el panel de detalle, sin afectar al resto de la página.
+// El nivel elegido se conserva al cambiar de día o de sector.
+let escalaB6 = 1;
+try {
+  const guardada = parseFloat(localStorage.getItem("b6-escala"));
+  if (guardada > 0) escalaB6 = guardada;
+} catch (e) { /* almacenamiento no disponible (modo incógnito) */ }
+
+export function aplicarZoomB6() {
+  const capa = document.getElementById("b6-zoom-capa");
+  const val = document.getElementById("b6-zoom-val");
+  if (!capa) return;
+  capa.style.transform = `scale(${escalaB6})`;
+  capa.style.width = `${100 / escalaB6}%`;
+  if (val) val.textContent = `${Math.round(escalaB6 * 100)}%`;
+}
+
+export function initZoomB6() {
+  const ajustar = (paso) => {
+    escalaB6 = Math.min(2, Math.max(0.5, Math.round((escalaB6 + paso) * 100) / 100));
+    try { localStorage.setItem("b6-escala", escalaB6); } catch (e) { /* sin persistencia */ }
+    aplicarZoomB6();
+  };
+  document.getElementById("b6-zoom-in")?.addEventListener("click", () => ajustar(0.1));
+  document.getElementById("b6-zoom-out")?.addEventListener("click", () => ajustar(-0.1));
+  aplicarZoomB6();
 }

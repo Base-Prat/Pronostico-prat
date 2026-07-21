@@ -6,7 +6,7 @@
 import { CONFIG, getCSVUrl } from "./config.js?v=20260720215000";
 import { esc } from "./utils.js?v=20260720215000";
 import { abrirDetalleHorario } from "./graficos.js?v=20260720215000";
-import { construirResumen } from "./vista-resumen.js?v=20260720215000";
+import { construirResumen, initZoomB6 } from "./vista-resumen.js?v=20260720215000";
 
 let sectorActivo = null;
 let filasPronostico = [];
@@ -81,6 +81,9 @@ function renderResumen(diaSeleccionado) {
     const { idx, dia } = ev.currentTarget.dataset;
     abrirDetalleHorario(parseInt(idx), dia);
   });
+
+  // Zoom propio de la tabla de 3 h (independiente del zoom del navegador).
+  initZoomB6();
 }
 
 // ── Carga del sector activo desde Google Sheets ──────────────────
