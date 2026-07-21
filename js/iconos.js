@@ -28,7 +28,7 @@ const SUN_PEEK = (cx, cy) => `<circle cx="${cx}" cy="${cy}" r="5.5" fill="#f6c44
   </g>`;
 
 const CLOUD = (x = 8, y = 14, c = "#dde3ea") =>
-  `<path d="M${x + 6} ${y + 16} a8 8 0 0 1 0-16 a10 10 0 0 1 19 -2 a7 7 0 0 1 2 18 Z" fill="${c}" stroke="#ffffff" stroke-width="1.4"/>`;
+  `<path d="M${x + 6} ${y + 16} a8 8 0 0 1 0-16 a10 10 0 0 1 19 -2 a7 7 0 0 1 2 18 Z" fill="${c}" stroke="#1a1a1a" stroke-width="1.3" stroke-linejoin="round"/>`;
 
 const CLOUD_DARK = (x, y) => CLOUD(x, y, "#cad2db");
 

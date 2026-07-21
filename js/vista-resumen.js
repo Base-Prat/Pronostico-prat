@@ -2,9 +2,9 @@
 //  VISTA RESUMEN — dibuja la tira de días y los bloques de 6 h.
 // ════════════════════════════════════════════════════════════════
 
-import { esc, getModelRunInfo } from "./utils.js?v=20260720223000";
-import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260720223000";
-import { iconoTiempo, flechaViento } from "./iconos.js?v=20260720223000";
+import { esc, getModelRunInfo } from "./utils.js?v=20260720233000";
+import { agruparPorDia, resumenDia, tramos3h } from "./resumen.js?v=20260720233000";
+import { iconoTiempo, flechaViento } from "./iconos.js?v=20260720233000";
 
 const PRECIP_LABEL = { nieve: "Nieve", lluvia: "Lluvia", niebla: "Niebla", neblina: "Neblina" };
 
@@ -59,25 +59,31 @@ const RIESGO_CLASE = {
 };
 
 // ── Fila desplegable del detalle cada 3 h ────────────────────────
-// Visible siempre: hora, ícono, temperatura y viento. El resto de
-// las variables aparece al tocar la fila, de modo que el ancho nunca
-// excede la pantalla y no hace falta desplazamiento lateral.
+// Visible siempre: hora, ícono, temperatura/sensación y viento. El
+// resto de las variables aparece al tocar la fila, de modo que el
+// ancho nunca excede la pantalla.
 function filaBloque(b, idx) {
   const claseRiesgo = RIESGO_CLASE[b.riesgoViento] || "";
   const dir = vientoDir(b.vientoRaw);
+  const v = parseVientoDet(b.vientoRaw);
 
   const detalles = [
     ["Nubosidad", b.nubesRaw],
-    ["Visibilidad", b.visibilidadRaw],
-    ["Viento", b.vientoRaw],
+    ["Visibilidad", visKm(b.visibilidadRaw)],
+    ["Fenomeno", fenomenoTxt(b.visibilidadRaw)],
     ["Temperatura del aire", b.tempRaw],
-    ["Sensación térmica", b.sensacionRaw],
+    ["Sensacion termica", b.sensacionRaw],
+    ["Viento sostenido", v.sostenido],
+    ["Rachas maximas", v.rachas],
+    ["Direccion", v.dirLarga],
+    ["Equivalencia km/h", v.kmh],
+    ["Riesgo por viento", RIESGO_TXT[b.riesgoViento] || "--"],
   ]
-    .filter(([, v]) => v && String(v).trim())
-    .map(([k, v]) => `
+    .filter(([, val]) => val && String(val).trim())
+    .map(([k, val]) => `
         <div class="b6-det-item">
           <span class="b6-det-k">${esc(k)}</span>
-          <span class="b6-det-v">${esc(v)}</span>
+          <span class="b6-det-v">${esc(val)}</span>
         </div>`)
     .join("");
 
@@ -86,7 +92,9 @@ function filaBloque(b, idx) {
       <button class="b6-cab" aria-expanded="false" aria-controls="b6-det-${idx}">
         <span class="b6-hora">${esc(b.etiqueta)}</span>
         <span class="b6-icono">${iconoTiempo(b.cielo, b.precip, b.intensidad)}</span>
-        <span class="b6-temp">${esc(valorTemp(b.tempRaw))}</span>
+        <span class="b6-temp">
+          <span class="b6-t-aire">${esc(valorTemp(b.tempRaw))}</span><span class="b6-t-sep">/</span><span class="b6-t-sens">${esc(valorTemp(b.sensacionRaw))}</span>
+        </span>
         <span class="b6-viento-res">
           <span class="rd-flecha">${flechaViento(dir)}</span>
           <span class="b6-viento-txt">
@@ -94,7 +102,7 @@ function filaBloque(b, idx) {
             <small>${esc(resumenViento(b.vientoRaw))}</small>
           </span>
         </span>
-        <span class="b6-chev" aria-hidden="true">⌄</span>
+        <span class="b6-chev" aria-hidden="true">&#8964;</span>
       </button>
       <div class="b6-det" id="b6-det-${idx}" hidden>
         <div class="b6-det-grid">${detalles}</div>
@@ -102,22 +110,70 @@ function filaBloque(b, idx) {
     </div>`;
 }
 
-// Reduce el viento crudo a su parte numérica ("W/NW 20/30 KT" → "20/30").
+// Etiquetas legibles del nivel de riesgo por viento sostenido.
+const RIESGO_TXT = {
+  bajo: "Bajo (hasta 15 kt)",
+  mod: "Moderado (16-20 kt)",
+  alto: "Alto (21-29 kt)",
+  peligro: "Peligro (30 kt o mas)",
+};
+
+// Nombres completos de los rumbos, para el panel desplegado.
+const RUMBO_LARGO = {
+  N: "Norte", NORTE: "Norte", "N/NE": "Norte-noreste", NE: "Noreste",
+  "E/NE": "Este-noreste", E: "Este", ESTE: "Este", "E/SE": "Este-sureste",
+  SE: "Sureste", "S/SE": "Sur-sureste", S: "Sur", SUR: "Sur",
+  "S/SW": "Sur-suroeste", SW: "Suroeste", "SW/W": "Suroeste-oeste",
+  W: "Oeste", OESTE: "Oeste", WESTE: "Oeste", "W/NW": "Oeste-noroeste",
+  NW: "Noroeste", "NW/N": "Noroeste-norte", "N/NW": "Norte-noroeste",
+};
+
+// Descompone el viento crudo en sus partes, para el desplegable.
+function parseVientoDet(raw) {
+  const t = String(raw || "");
+  const dir = (t.match(/^[A-Za-z\u00d1/]+/) || [""])[0].trim().toUpperCase();
+  const sost = t.split(/rachas?/i)[0].replace(/^[A-Za-z\u00d1/]+\s*/, "").trim();
+  const r = t.match(/rachas?\s*(\d+)/i);
+  const nums = (sost.match(/\d+/g) || []).map(Number);
+  const kmh = nums.length
+    ? nums.map((n) => Math.round(n * 1.852)).join("/") + " km/h"
+    : "--";
+  return {
+    sostenido: sost || "--",
+    rachas: r ? r[1] + " kt" : "Sin rachas destacadas",
+    dirLarga: RUMBO_LARGO[dir] || dir || "--",
+    kmh,
+  };
+}
+
+// Extrae solo la parte de visibilidad expresada en kilometros.
+function visKm(raw) {
+  const m = String(raw || "").match(/^\s*\d+(\s*\/\s*\d+)?\s*km/i);
+  return m ? m[0].trim().toUpperCase() : "--";
+}
+
+// Extrae el fenomeno meteorologico, sin la parte numerica.
+function fenomenoTxt(raw) {
+  const t = String(raw || "").replace(/^\s*\d+(\s*\/\s*\d+)?\s*km\s*/i, "").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : "Sin fenomeno";
+}
+
+// Reduce el viento crudo a su parte numerica ("W/NW 20/30 KT" -> "20/30 KT").
 function resumenViento(raw) {
   const t = String(raw || "");
-  const sost = t.split(/rachas?/i)[0].replace(/^[A-Za-zÑ/]+\s*/, "").trim();
+  const sost = t.split(/rachas?/i)[0].replace(/^[A-Za-z\u00d1/]+\s*/, "").trim();
   const r = t.match(/rachas?\s*(\d+)/i);
   const base = sost || "--";
-  return r ? `${base} (R ${r[1]})` : base;
+  return r ? base + " (R " + r[1] + ")" : base;
 }
 
 // Reduce el texto crudo de temperatura a un solo valor.
-// "-12°C / -6°C" → "-6°" · "-8°C" → "-8°"
+// "-12 C / -6 C" -> "-6" con el simbolo de grado.
 function valorTemp(raw) {
   const nums = String(raw || "").match(/-?\d+(?:[.,]\d+)?/g);
   if (!nums) return "--";
   const vals = nums.map((n) => parseFloat(n.replace(",", ".")));
-  return `${Math.max(...vals)}°`;
+  return Math.max(...vals) + "\u00b0";
 }
 
 // Extrae solo la dirección textual del viento crudo para la flecha.
@@ -171,7 +227,7 @@ export function construirResumen(filas, diaSeleccionado) {
 }
 
 
-// ── Acordeón del detalle de 3 h ──────────────────────────────────
+// ── Acordeon del detalle de 3 h ──────────────────────────────────
 // Una sola fila abierta a la vez, para mantener la vista corta.
 export function initAcordeonB6() {
   const lista = document.querySelector(".b6-lista");
