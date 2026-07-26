@@ -56,14 +56,20 @@ function construirGrilla() {
 //  2) Descarga del campo de viento (una sola request multipunto)
 // ────────────────────────────────────────────────────────────────
 async function descargarViento(lats, lons) {
-  const url =
-    "https://api.open-meteo.com/v1/forecast" +
-    `?latitude=${lats.join(",")}` +
-    `&longitude=${lons.join(",")}` +
-    "&current=wind_speed_10m,wind_direction_10m" +
-    "&wind_speed_unit=ms";
-
-  const res = await fetch(url);
+  // Con 812 coordenadas, meterlas en la URL supera los ~8000
+  // caracteres que aceptan los servidores (da "Failed to fetch").
+  // Open-Meteo permite enviar los parámetros por POST en el cuerpo,
+  // justamente para evitar ese límite de longitud.
+  const res = await fetch("https://api.open-meteo.com/v1/forecast", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      latitude: lats.join(","),
+      longitude: lons.join(","),
+      current: "wind_speed_10m,wind_direction_10m",
+      wind_speed_unit: "ms",
+    }),
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
 
