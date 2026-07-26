@@ -10,6 +10,7 @@ import { setSectorActivo } from "./pronostico.js?v=20260721010000";
 import { cerrarModal } from "./graficos.js?v=20260721010000";
 import { initCalculadora } from "./calculadora.js?v=20260721010000";
 import { cargarMeteotabla } from "./meteotabla.js?v=20260721010000";
+import { initMapaViento } from "./mapa-viento.js?v=20260721010000";
 
 // ── Enlaces del sidebar (fuentes externas oficiales) ─────────────
 function initEnlacesSidebar() {
@@ -111,6 +112,7 @@ function init() {
   initEnlacesSidebar();
   initSectorTabs();
   initCalculadora();
+  initMapaViento();
 
   // Eventos globales de UI. Se usa ?. para que la ausencia de un
   // elemento no detenga el resto del arranque.

@@ -1,0 +1,65 @@
+/* ════════════════════════════════════════════════════════════════
+   MAPA DE VIENTO — contenedor, marcadores y control de partículas
+   ════════════════════════════════════════════════════════════════ */
+
+.mapa-viento-section {
+  margin: 20px 0;
+}
+.mapa-viento-section h2 {
+  color: var(--navy, #0a2540);
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+/* Contenedor del mapa. Altura fija en escritorio, algo menor en móvil. */
+#mapa-viento {
+  width: 100%;
+  height: 520px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  background: #0b1622;
+}
+@media (max-width: 768px) {
+  #mapa-viento { height: 380px; border-radius: 10px; }
+}
+
+/* ── Marcadores de sector (divIcon) ─────────────────────────────── */
+.mv-marker { background: none; border: none; }
+.mv-dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.mv-dot:hover { transform: scale(1.35); }
+
+/* Color por grupo (coherente con las pestañas del sitio). */
+.mv-grupo-bases { background: #2ecc71; }   /* Bases antárticas  */
+.mv-grupo-pasos { background: #3498db; }   /* Pasos y estrechos */
+.mv-grupo-drake { background: #e67e22; }   /* Paso Drake        */
+
+/* ── Control de leyenda/valores de leaflet-velocity ─────────────── */
+.leaflet-control-velocity {
+  background: rgba(10, 22, 34, 0.82) !important;
+  color: #fff !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  font-family: "Roboto", sans-serif !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+}
+
+/* Tooltips de Leaflet en modo oscuro. */
+.leaflet-tooltip {
+  background: rgba(10, 22, 34, 0.9);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.leaflet-tooltip-top:before { border-top-color: rgba(10, 22, 34, 0.9); }
