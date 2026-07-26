@@ -17,7 +17,7 @@ import { SECTORES } from "./config.js?v=20260721010000";
 import { setSectorActivo } from "./pronostico.js?v=20260721010000";
 import { cargarMeteotabla } from "./meteotabla.js?v=20260721010000";
 
-const BBOX = { latN: -53.0, latS: -70.0, lonW: -75.0, lonE: -53.0 };
+const BBOX = { latN: -53.0, latS: -70.0, lonW: -78.0, lonE: -50.0 };
 const PASO = 0.75;
 const FORECAST_DAYS = 10;
 const REFRESCO_MS = 2 * 60 * 60 * 1000;    // auto-refresco cada 2 h (amable con la API)
@@ -25,7 +25,7 @@ const MS_A_KT = 1.943844;
 const PLAY_MS = 700;                        // ms por paso en la animación
 
 let mapa = null;
-let capaColor = null, capaViento = null, capaBarbas = null, capaIsobaras = null, capaMarcadores = null;
+let capaColor = null, capaBarbas = null, capaIsobaras = null, capaMarcadores = null;
 let controlCapas = null;
 
 // Estado de la serie temporal.
@@ -168,31 +168,6 @@ function procesarSerie(puntos, nx, ny) {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  U/V para partículas de un paso dado.
-// ════════════════════════════════════════════════════════════════
-function velocityDataDe(paso) {
-  const { nx, ny, velKt, dir } = SERIE;
-  const vel = velKt[paso], dr = dir[paso];
-  const npts = vel.length;
-  const uData = new Array(npts), vData = new Array(npts);
-  for (let k = 0; k < npts; k++) {
-    const ms = vel[k] / MS_A_KT;
-    const rad = (dr[k] * Math.PI) / 180;
-    uData[k] = -ms * Math.sin(rad);
-    vData[k] = -ms * Math.cos(rad);
-  }
-  const headerBase = {
-    nx, ny, dx: PASO, dy: PASO,
-    la1: BBOX.latN, la2: BBOX.latS, lo1: BBOX.lonW, lo2: BBOX.lonE,
-    parameterCategory: 2, parameterUnit: "m.s-1", refTime: new Date().toISOString(),
-  };
-  return [
-    { header: { ...headerBase, parameterNumber: 2, parameterNumberName: "eastward_wind" }, data: uData },
-    { header: { ...headerBase, parameterNumber: 3, parameterNumberName: "northward_wind" }, data: vData },
-  ];
-}
-
-// ════════════════════════════════════════════════════════════════
 //  FONDO DE COLOR por bandas.
 // ════════════════════════════════════════════════════════════════
 function bilineal(grid, nx, ny, fx, fy) {
@@ -318,7 +293,7 @@ function renderPaso(paso) {
   if (!SERIE) return;
   const { nx, ny, velKt } = SERIE;
 
-  [capaColor, capaViento, capaBarbas, capaIsobaras].forEach((c) => c && c.remove());
+  [capaColor, capaBarbas, capaIsobaras].forEach((c) => c && c.remove());
   if (controlCapas) controlCapas.remove();
 
   const url = generarColorURL(velKt[paso], nx, ny);
@@ -326,16 +301,6 @@ function renderPaso(paso) {
   capaColor = L.imageOverlay(url, bounds, { opacity: 0.8, interactive: false }).addTo(mapa);
   capaIsobaras = crearCapaIsobaras(paso).addTo(mapa);
   capaBarbas = crearCapaBarbas(paso).addTo(mapa);
-  capaViento = L.velocityLayer({
-    displayValues: true,
-    displayOptions: {
-      velocityType: "Viento 10 m", position: "bottomleft", emptyString: "Sin datos",
-      angleConvention: "bearingCW", speedUnit: "kt", directionString: "Dirección", speedString: "Velocidad",
-    },
-    data: velocityDataDe(paso), minVelocity: 0, maxVelocity: 30,
-    velocityScale: 0.008, particleAge: 60, particleMultiplier: 1 / 350,
-    lineWidth: 1, colorScale: ["rgba(60,60,60,0.55)"], opacity: 0.8,
-  }).addTo(mapa);
 
   controlCapas = agregarControlCapas();
   actualizarEtiquetaTiempo(paso);
@@ -481,7 +446,6 @@ function agregarLeyenda() {
 function agregarControlCapas() {
   const overlays = {};
   if (capaColor) overlays["🎨 Color (velocidad)"] = capaColor;
-  if (capaViento) overlays["💨 Partículas"] = capaViento;
   if (capaBarbas) overlays["🪶 Barbas de viento"] = capaBarbas;
   if (capaIsobaras) overlays["🔴 Isobaras (presión)"] = capaIsobaras;
   if (capaMarcadores) overlays["📍 Sectores"] = capaMarcadores;
@@ -554,18 +518,22 @@ function onZoom() {
 export function initMapaViento(idContenedor = "mapa-viento") {
   const cont = document.getElementById(idContenedor);
   if (!cont) return;
-  if (typeof L === "undefined" || typeof L.velocityLayer === "undefined") {
-    console.error("Leaflet o leaflet-velocity no están cargados.");
-    cont.innerHTML = '<p style="padding:1rem;color:#333">No se pudieron cargar las librerías del mapa.</p>';
+  if (typeof L === "undefined") {
+    console.error("Leaflet no está cargado.");
+    cont.innerHTML = '<p style="padding:1rem;color:#333">No se pudo cargar la librería del mapa.</p>';
     return;
   }
   const bounds = L.latLngBounds([BBOX.latN, BBOX.lonW], [BBOX.latS, BBOX.lonE]);
   mapa = L.map(idContenedor, {
     zoomControl: true, attributionControl: true,
     minZoom: 3, maxZoom: 9,
-    maxBounds: bounds.pad(0.3), maxBoundsViscosity: 0.5,
+    // Limita el desplazamiento al área con datos (poco margen).
+    maxBounds: bounds.pad(0.08), maxBoundsViscosity: 1.0,
   });
-  mapa.fitBounds(bounds);
+  // Encaja la vista al área con datos, llenando el contenedor sin
+  // dejar franjas grises: se centra y se elige el zoom que cubre el
+  // recuadro por su lado más restrictivo.
+  mapa.fitBounds(bounds, { padding: [2, 2] });
 
   L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     { attribution: "&copy; OSM &copy; CARTO", subdomains: "abcd", maxZoom: 19 }).addTo(mapa);
