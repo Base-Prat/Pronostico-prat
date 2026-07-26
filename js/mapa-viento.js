@@ -20,7 +20,7 @@ import { cargarMeteotabla } from "./meteotabla.js?v=20260721010000";
 const BBOX = { latN: -53.0, latS: -70.0, lonW: -75.0, lonE: -53.0 };
 const PASO = 0.75;
 const FORECAST_DAYS = 10;
-const REFRESCO_MS = 60 * 60 * 1000;        // auto-refresco cada 1 h
+const REFRESCO_MS = 2 * 60 * 60 * 1000;    // auto-refresco cada 2 h (amable con la API)
 const MS_A_KT = 1.943844;
 const PLAY_MS = 700;                        // ms por paso en la animación
 
@@ -71,22 +71,59 @@ function construirGrilla() {
 // ════════════════════════════════════════════════════════════════
 //  DESCARGA de la serie horaria completa (POST).
 // ════════════════════════════════════════════════════════════════
-async function descargarSerie(lats, lons) {
-  const res = await fetch("https://api.open-meteo.com/v1/forecast", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      latitude: lats.join(","),
-      longitude: lons.join(","),
-      hourly: "wind_speed_10m,wind_direction_10m,pressure_msl",
-      wind_speed_unit: "ms",
-      forecast_days: String(FORECAST_DAYS),
-      timezone: "UTC",
-    }),
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json = await res.json();
-  return Array.isArray(json) ? json : [json];
+// Espera n milisegundos.
+const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Descarga con reintento: ante un 429 (límite de la API) espera y
+// reintenta con espera creciente, en vez de fallar de inmediato.
+async function descargarSerie(lats, lons, intentos = 3) {
+  for (let i = 0; i < intentos; i++) {
+    const res = await fetch("https://api.open-meteo.com/v1/forecast", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        latitude: lats.join(","),
+        longitude: lons.join(","),
+        hourly: "wind_speed_10m,wind_direction_10m,pressure_msl",
+        wind_speed_unit: "ms",
+        forecast_days: String(FORECAST_DAYS),
+        timezone: "UTC",
+      }),
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return Array.isArray(json) ? json : [json];
+    }
+    if (res.status === 429 && i < intentos - 1) {
+      // Límite de peticiones: espera creciente (5 s, 15 s) y reintenta.
+      await esperar(5000 * (i * 2 + 1));
+      continue;
+    }
+    throw new Error(`HTTP ${res.status}`);
+  }
+}
+
+// ── Caché de la serie en el navegador ────────────────────────────
+// Guarda la última serie descargada para no volver a pedirla en cada
+// recarga (evita gastar el cupo de la API mientras se desarrolla y
+// permite ver el mapa aunque la API esté temporalmente saturada).
+const CACHE_KEY = "mv_serie_cache";
+const CACHE_VIGENCIA_MS = 60 * 60 * 1000;   // 1 h
+
+function guardarCache(puntos) {
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), puntos }));
+  } catch (e) { /* almacenamiento lleno o no disponible: se ignora */ }
+}
+
+function leerCache() {
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { ts, puntos } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_VIGENCIA_MS) return null;   // caducada
+    return puntos;
+  } catch (e) { return null; }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -454,15 +491,52 @@ function agregarControlCapas() {
 // ════════════════════════════════════════════════════════════════
 //  CARGA / REFRESCO de la serie.
 // ════════════════════════════════════════════════════════════════
-async function cargarSerie() {
+function mostrarAviso(texto) {
+  let el = document.getElementById("mv-aviso");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "mv-aviso";
+    el.className = "mv-aviso";
+    document.getElementById("mapa-viento").appendChild(el);
+  }
+  el.textContent = texto;
+  el.style.display = texto ? "block" : "none";
+}
+
+async function cargarSerie(forzar = false) {
   const { nx, ny, lats, lons } = construirGrilla();
-  const puntos = await descargarSerie(lats, lons);
+
+  // 1) Intentar desde la caché del navegador (salvo refresco forzado).
+  let puntos = forzar ? null : leerCache();
+
+  // 2) Si no hay caché válida, descargar.
+  if (!puntos) {
+    mostrarAviso("Cargando pronóstico… (puede tardar unos segundos)");
+    try {
+      puntos = await descargarSerie(lats, lons);
+      guardarCache(puntos);
+    } catch (e) {
+      // Si falla la descarga pero hay una caché vieja, usarla igual.
+      const respaldo = leerCache();
+      if (respaldo) {
+        puntos = respaldo;
+        mostrarAviso("Mostrando último pronóstico guardado (la API no respondió).");
+        setTimeout(() => mostrarAviso(""), 4000);
+      } else {
+        if (String(e.message).includes("429")) {
+          mostrarAviso("La API de datos está saturada (límite temporal). Reintenta en unos minutos.");
+        } else {
+          mostrarAviso("No se pudo cargar el pronóstico. Revisa tu conexión.");
+        }
+        throw e;
+      }
+    }
+  }
+
   SERIE = procesarSerie(puntos, nx, ny);
+  mostrarAviso("");
 
-  // Crear el control de tiempo solo la primera vez.
   if (!document.getElementById("mv-slider")) crearControlTiempo();
-
-  // Conservar la posición temporal si es posible tras un refresco.
   irAPaso(Math.min(pasoActual, PASOS.length - 1));
 }
 
@@ -500,11 +574,9 @@ export function initMapaViento(idContenedor = "mapa-viento") {
   pintarMarcadores();
   mapa.on("zoomend", onZoom);
 
-  cargarSerie().catch((e) => {
-    console.error("No se pudo cargar la serie:", e);
-    cont.querySelector(".leaflet-control-attribution");
-  });
-  setInterval(() => cargarSerie().catch((e) => console.error("Refresco falló:", e)), REFRESCO_MS);
+  cargarSerie().catch((e) => console.error("No se pudo cargar la serie:", e));
+  // El refresco periódico fuerza descarga nueva (salta la caché).
+  setInterval(() => cargarSerie(true).catch((e) => console.error("Refresco falló:", e)), REFRESCO_MS);
 
   setTimeout(() => mapa.invalidateSize(), 200);
   return mapa;

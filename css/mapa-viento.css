@@ -135,3 +135,20 @@
   .mv-tiempo { width: calc(100vw - 40px); }
   .mv-tiempo-label { font-size: 0.7rem; }
 }
+
+/* ── Aviso de estado (cargando / error / caché) ─────────────────── */
+.mv-aviso {
+  position: absolute;
+  top: 12px; left: 50%; transform: translateX(-50%);
+  z-index: 1200;
+  background: rgba(10, 37, 64, 0.94);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+  max-width: 90%;
+  text-align: center;
+}
