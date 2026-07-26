@@ -298,7 +298,7 @@ function renderPaso(paso) {
 
   const url = generarColorURL(velKt[paso], nx, ny);
   const bounds = [[BBOX.latN, BBOX.lonW], [BBOX.latS, BBOX.lonE]];
-  capaColor = L.imageOverlay(url, bounds, { opacity: 0.8, interactive: false }).addTo(mapa);
+  capaColor = L.imageOverlay(url, bounds, { opacity: 0.68, interactive: false }).addTo(mapa);
   capaIsobaras = crearCapaIsobaras(paso).addTo(mapa);
   capaBarbas = crearCapaBarbas(paso).addTo(mapa);
 
@@ -527,16 +527,22 @@ export function initMapaViento(idContenedor = "mapa-viento") {
   mapa = L.map(idContenedor, {
     zoomControl: true, attributionControl: true,
     minZoom: 3, maxZoom: 9,
-    // Limita el desplazamiento al área con datos (poco margen).
-    maxBounds: bounds.pad(0.08), maxBoundsViscosity: 1.0,
+    zoomSnap: 0.1,        // zoom fraccionario: el encuadre cubre el marco con precisión
+    // El desplazamiento no puede salir del rectángulo de datos.
+    maxBounds: bounds, maxBoundsViscosity: 1.0,
   });
-  // Encaja la vista al área con datos, llenando el contenedor sin
-  // dejar franjas grises: se centra y se elige el zoom que cubre el
-  // recuadro por su lado más restrictivo.
-  mapa.fitBounds(bounds, { padding: [2, 2] });
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  // Fondo base: Voyager de CARTO dibuja la costa y la batimetría con
+  // buen contraste. El color de viento se pinta translúcido encima,
+  // así el contorno de la costa se ve a través del color.
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
     { attribution: "&copy; OSM &copy; CARTO", subdomains: "abcd", maxZoom: 19 }).addTo(mapa);
+
+  // Vista inicial: el rectángulo de datos CUBRE el contenedor (no solo
+  // "cabe"), de modo que no se ve territorio fuera del área con datos.
+  const zoomCubrir = mapa.getBoundsZoom(bounds, true);
+  mapa.setView(bounds.getCenter(), zoomCubrir);
+  mapa.setMinZoom(zoomCubrir);          // no permitir alejar más allá del área
 
   agregarLeyenda();
   pintarMarcadores();
