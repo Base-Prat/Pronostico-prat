@@ -1,65 +1,137 @@
 /* ════════════════════════════════════════════════════════════════
-   MAPA DE VIENTO — contenedor, marcadores y control de partículas
+   CARTA SINÓPTICA — contenedor, marcadores, barbas, leyenda
    ════════════════════════════════════════════════════════════════ */
 
-.mapa-viento-section {
-  margin: 20px 0;
-}
+.mapa-viento-section { margin: 20px 0; }
 .mapa-viento-section h2 {
   color: var(--navy, #0a2540);
   font-weight: 900;
   margin-bottom: 10px;
 }
 
-/* Contenedor del mapa. Altura fija en escritorio, algo menor en móvil. */
 #mapa-viento {
   width: 100%;
-  height: 520px;
+  height: 600px;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-  background: #0b1622;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  background: #eef3f7;
 }
 @media (max-width: 768px) {
-  #mapa-viento { height: 380px; border-radius: 10px; }
+  #mapa-viento { height: 440px; border-radius: 10px; }
 }
 
-/* ── Marcadores de sector (divIcon) ─────────────────────────────── */
+/* ── Barbas de viento (SVG) ──────────────────────────────────────
+   Sin fondo; solo el trazo. No capturan clics. */
+.mv-barba { background: none; border: none; pointer-events: none; }
+
+/* ── Marcadores de sector ───────────────────────────────────────── */
 .mv-marker { background: none; border: none; }
 .mv-dot {
-  display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-  transition: transform 0.15s ease;
+  display: block; width: 15px; height: 15px; border-radius: 50%;
+  border: 2.5px solid #12212f;
+  box-shadow: 0 0 0 2px #fff, 0 1px 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer; transition: transform 0.15s ease;
 }
-.mv-dot:hover { transform: scale(1.35); }
+.mv-dot:hover { transform: scale(1.4); }
+.mv-grupo-bases { background: #1fbe5a; }
+.mv-grupo-pasos { background: #2b8fe0; }
+.mv-grupo-drake { background: #f07a1f; }
 
-/* Color por grupo (coherente con las pestañas del sitio). */
-.mv-grupo-bases { background: #2ecc71; }   /* Bases antárticas  */
-.mv-grupo-pasos { background: #3498db; }   /* Pasos y estrechos */
-.mv-grupo-drake { background: #e67e22; }   /* Paso Drake        */
+/* ── Leyenda de bandas oficiales ────────────────────────────────── */
+.mv-leyenda {
+  background: rgba(255, 255, 255, 0.94);
+  color: #12212f;
+  padding: 8px 10px 6px;
+  border-radius: 10px;
+  font-family: "Roboto", sans-serif;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.mv-ley-titulo {
+  font-size: 0.72rem; font-weight: 900; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 5px; color: #12212f;
+}
+.mv-ley-barra-bandas {
+  display: flex; height: 14px; border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 3px; overflow: hidden;
+}
+.mv-ley-celda { flex: 1; }
+.mv-ley-nums {
+  display: flex; justify-content: space-between;
+  font-size: 0.55rem; font-weight: 700; margin-top: 2px; color: #333;
+}
 
-/* ── Control de leyenda/valores de leaflet-velocity ─────────────── */
-.leaflet-control-velocity {
-  background: rgba(10, 22, 34, 0.82) !important;
-  color: #fff !important;
-  padding: 4px 10px !important;
-  border-radius: 8px !important;
+/* ── Control de capas ───────────────────────────────────────────── */
+.leaflet-control-layers {
   font-family: "Roboto", sans-serif !important;
-  font-size: 0.8rem !important;
-  font-weight: 600 !important;
+  font-size: 0.82rem !important;
+  border-radius: 10px !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3) !important;
+}
+.leaflet-control-layers label { font-weight: 600; margin: 3px 0; }
+
+/* ── Valores de leaflet-velocity (cursor) ───────────────────────── */
+.leaflet-control-velocity {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #12212f !important;
+  padding: 4px 10px !important; border-radius: 8px !important;
+  font-family: "Roboto", sans-serif !important;
+  font-size: 0.8rem !important; font-weight: 600 !important;
 }
 
-/* Tooltips de Leaflet en modo oscuro. */
+/* ── Tooltips ───────────────────────────────────────────────────── */
 .leaflet-tooltip {
-  background: rgba(10, 22, 34, 0.9);
-  color: #fff;
-  border: none;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  background: rgba(10, 22, 34, 0.92); color: #fff; border: none;
+  font-weight: 700; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
-.leaflet-tooltip-top:before { border-top-color: rgba(10, 22, 34, 0.9); }
+.leaflet-tooltip-top:before { border-top-color: rgba(10, 22, 34, 0.92); }
+
+/* ════════════════════════════════════════════════════════════════
+   LÍNEA DE TIEMPO — slider, botones, play, saltos por día
+   ════════════════════════════════════════════════════════════════ */
+.mv-tiempo {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+  font-family: "Roboto", sans-serif;
+  width: 300px;
+  max-width: calc(100vw - 40px);
+}
+.mv-tiempo-top {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+}
+.mv-tiempo-top button {
+  background: #0a2540; color: #fff; border: none; border-radius: 6px;
+  width: 32px; height: 30px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; transition: background 0.15s;
+}
+.mv-tiempo-top button svg { display: block; }
+.mv-tiempo-top button:hover { background: #1a4060; }
+#mv-play { background: #2b8fe0; }
+#mv-play:hover { background: #1f6fb0; }
+.mv-tiempo-label {
+  flex: 1; text-align: right; font-size: 0.78rem; font-weight: 800;
+  color: #0a2540; white-space: nowrap;
+}
+#mv-slider { width: 100%; margin: 4px 0; cursor: pointer; }
+.mv-tiempo-dias {
+  display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px;
+}
+.mv-tiempo-dias button {
+  flex: 1; min-width: 40px; background: #eef3f7; color: #0a2540;
+  border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 5px;
+  padding: 3px 1px; cursor: pointer; transition: background 0.15s;
+  display: flex; flex-direction: column; align-items: center; line-height: 1.1;
+}
+.mv-tiempo-dias button:hover { background: #2b8fe0; color: #fff; }
+.mv-dia-sem { font-size: 0.6rem; font-weight: 700; opacity: 0.75; }
+.mv-dia-fecha { font-size: 0.68rem; font-weight: 800; }
+
+@media (max-width: 768px) {
+  .mv-tiempo { width: calc(100vw - 40px); }
+  .mv-tiempo-label { font-size: 0.7rem; }
+}
