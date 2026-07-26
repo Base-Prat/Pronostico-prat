@@ -11,13 +11,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
 
-  <!-- Leaflet + mapa de viento -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <!-- Estilos propios -->
   <link rel="stylesheet" href="css/styles.css?v=20260721010000" />
   <link rel="stylesheet" href="css/widget.css?v=20260721010000" />
-  <link rel="stylesheet" href="css/mapa-viento.css?v=20260721010000" />
   <base target="_blank" />
 </head>
 <body>
@@ -89,11 +85,6 @@
     <section class="meteotabla-section" aria-label="Meteotabla de pronóstico">
       <h2 class="mt-titulo">Meteotabla — pronóstico horario</h2>
       <div id="meteotabla"></div>
-    </section>
-
-    <section class="mapa-viento-section" aria-label="Mapa de viento animado">
-      <h2>Campo de viento — Península Antártica y Paso Drake</h2>
-      <div id="mapa-viento"></div>
     </section>
 
     <section class="footer-section">
@@ -169,10 +160,6 @@
       <p class="wc-note">Basado en la tabla oficial de enfriamiento por viento (Base Prat).</p>
     </div>
   </div>
-
-  <!-- Leaflet + leaflet-velocity (globales, deben ir ANTES del módulo) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-velocity@2.1.0/dist/leaflet-velocity.min.js"></script>
 
   <!-- Lógica (módulos ES) -->
   <script type="module" src="js/app.js?v=20260721010000"></script>
