@@ -1,19 +1,10 @@
-# ════════════════════════════════════════════════════════════════
-#  GitHub Actions — Vigilante meteorológico Base Prat
-#  Ejecuta vigilante.py cada hora. Detecta condiciones de aviso
-#  (visibilidad <1km, temp <-10°C, racha >25kt) y guarda alerta.json.
-#  Etapa 3: solo detecta. El envío por Firebase se añade en Etapa 4.
-# ════════════════════════════════════════════════════════════════
-name: Vigilante Meteorológico
+name: Vigilante Meteorologico
 
-on:
+"on":
   schedule:
-    # Cada hora, en el minuto 10 (UTC). GitHub usa siempre UTC.
     - cron: "10 * * * *"
-  # Permite ejecutarlo a mano desde la pestaña Actions (botón "Run workflow").
   workflow_dispatch:
 
-# Permite que la Action escriba en el repo (para guardar alerta.json).
 permissions:
   contents: write
 
@@ -29,17 +20,22 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Instalar dependencias
+        run: pip install firebase-admin
+
       - name: Ejecutar el vigilante
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
         run: python vigilante.py
 
-      - name: Guardar resultado (alerta.json) si cambió
+      - name: Guardar resultado si cambio
         run: |
-          if [ -n "$(git status --porcelain alerta.json)" ]; then
+          if [ -n "$(git status --porcelain alerta.json estado_alerta.txt)" ]; then
             git config user.name "vigilante-bot"
             git config user.email "vigilante@users.noreply.github.com"
-            git add alerta.json
-            git commit -m "Actualiza alerta.json (vigilante automático)"
+            git add alerta.json estado_alerta.txt
+            git commit -m "Actualiza estado del vigilante (automatico)"
             git push
           else
-            echo "Sin cambios en alerta.json."
+            echo "Sin cambios que guardar."
           fi
