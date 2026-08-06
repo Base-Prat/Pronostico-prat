@@ -1,0 +1,54 @@
+/* ════════════════════════════════════════════════════════════
+   Estilos extra para los botones de la calculadora (minimizar,
+   cerrar y reabrir). Se carga después de widget.css.
+   ════════════════════════════════════════════════════════════ */
+
+/* Contenedor de los botones en la barra de título */
+.wc-head-btns {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Botones minimizar (—) y cerrar (✕) */
+#prat-toggle,
+#prat-close {
+  width: 26px;
+  height: 26px;
+  line-height: 1;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+#prat-toggle:hover { background: rgba(255, 255, 255, 0.30); }
+#prat-close:hover  { background: #c0392b; }
+
+/* Botón flotante para reabrir la calculadora tras cerrarla */
+#prat-reopen {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9998;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: #0a4d8c;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  align-items: center;
+  justify-content: center;
+}
+
+#prat-reopen:hover { background: #0c5fae; }
