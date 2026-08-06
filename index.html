@@ -11,9 +11,22 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
 
+  <!-- Leaflet + mapa de viento -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <!-- Estilos propios -->
   <link rel="stylesheet" href="css/styles.css?v=20260721010000" />
   <link rel="stylesheet" href="css/widget.css?v=20260721010000" />
+  <link rel="stylesheet" href="css/mapa-viento.css?v=20260721010000" />
+
+  <!-- ── PWA ── -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0a2540" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Meteo Antártico" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <base target="_blank" />
 </head>
 <body>
@@ -85,6 +98,11 @@
     <section class="meteotabla-section" aria-label="Meteotabla de pronóstico">
       <h2 class="mt-titulo">Meteotabla — pronóstico horario</h2>
       <div id="meteotabla"></div>
+    </section>
+
+    <section class="mapa-viento-section" aria-label="Mapa de viento animado">
+      <h2>Campo de viento — Península Antártica y Paso Drake</h2>
+      <div id="mapa-viento"></div>
     </section>
 
     <section class="footer-section">
@@ -161,7 +179,22 @@
     </div>
   </div>
 
+  <!-- Leaflet + leaflet-velocity (globales, deben ir ANTES del módulo) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-velocity@2.1.0/dist/leaflet-velocity.min.js"></script>
+
   <!-- Lógica (módulos ES) -->
   <script type="module" src="js/app.js?v=20260721010000"></script>
+
+  <!-- ── Registro del Service Worker (PWA) ── -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch((e) =>
+          console.warn("SW no registrado:", e)
+        );
+      });
+    }
+  </script>
 </body>
 </html>
