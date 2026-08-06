@@ -33,7 +33,13 @@ btn.addEventListener("click", async () => {
       alert("Permiso de notificaciones denegado.");
       return;
     }
-    const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+    const swReg = await navigator.serviceWorker.register(
+      "firebase-messaging-sw.js"
+    );
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: swReg
+    });
     if (token) {
       console.log("Token FCM:", token);
       alert("✅ Alertas activadas correctamente.");
