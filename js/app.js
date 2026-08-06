@@ -10,6 +10,7 @@ import { setSectorActivo } from "./pronostico.js?v=20260721010000";
 import { cerrarModal } from "./graficos.js?v=20260721010000";
 import { initCalculadora } from "./calculadora.js?v=20260721010000";
 import { cargarMeteotabla } from "./meteotabla.js?v=20260721010000";
+import { initMapaViento } from "./mapa-viento.js?v=20260721010000";
 
 // ── Enlaces del sidebar (fuentes externas oficiales) ─────────────
 function initEnlacesSidebar() {
@@ -18,6 +19,21 @@ function initEnlacesSidebar() {
     .map((l) => `<a href="${l.url}" target="_blank" rel="noopener" class="external-link">${esc(l.txt)}</a>`)
     .join("");
   nav.querySelectorAll(".external-link").forEach((a) => a.addEventListener("click", cerrarSidebar));
+}
+
+// ── Aplica los datos visuales de un sector en el encabezado ──────
+//    (título, subtítulo, badge oceánico e imagen de fondo).
+//    Se usa tanto en el arranque como al cambiar de sector.
+function aplicarCabeceraSector(sector) {
+  document.getElementById("location-title").textContent = sector.nombre;
+  document.getElementById("location-subtitle").innerHTML = esc(sector.subtitulo || "");
+
+  const badge = document.getElementById("badge-oceanico");
+  badge.style.display = sector.oceanico ? "inline-flex" : "none";
+  badge.textContent = sector.oceanico ? "🌊 Área oceánica" : "";
+
+  const bg = document.getElementById("header-bg-img");
+  if (sector.imagen) bg.style.backgroundImage = `url('${sector.imagen}')`;
 }
 
 // ── Tabs de sectores con separadores por grupo ───────────────────
@@ -53,15 +69,7 @@ function seleccionarSector(sector, btn) {
   document.querySelectorAll(".sector-tab").forEach((t) => t.classList.remove("active"));
   btn.classList.add("active");
 
-  document.getElementById("location-title").textContent = sector.nombre;
-  document.getElementById("location-subtitle").innerHTML = esc(sector.subtitulo || "");
-
-  const badge = document.getElementById("badge-oceanico");
-  badge.style.display = sector.oceanico ? "inline-flex" : "none";
-  badge.textContent = sector.oceanico ? "🌊 Área oceánica" : "";
-
-  const bg = document.getElementById("header-bg-img");
-  if (sector.imagen) bg.style.backgroundImage = `url('${sector.imagen}')`;
+  aplicarCabeceraSector(sector);
 
   setSectorActivo(sector);
   cargarMeteotabla(sector);
@@ -111,6 +119,7 @@ function init() {
   initEnlacesSidebar();
   initSectorTabs();
   initCalculadora();
+  initMapaViento();
 
   // Eventos globales de UI. Se usa ?. para que la ausencia de un
   // elemento no detenga el resto del arranque.
@@ -119,7 +128,9 @@ function init() {
   document.querySelector(".btn-ver-web")?.addEventListener("click", verVersionEscritorio);
   document.getElementById("modal-close")?.addEventListener("click", cerrarModal);
 
-  // Sector inicial.
+  // Sector inicial: aplica también la cabecera (título, subtítulo,
+  // badge e IMAGEN de fondo) para que se vea desde la primera carga.
+  aplicarCabeceraSector(SECTORES[0]);
   setSectorActivo(SECTORES[0]);
   cargarMeteotabla(SECTORES[0]);
 
