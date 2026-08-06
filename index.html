@@ -16,185 +16,11 @@
 
   <!-- Estilos propios -->
   <link rel="stylesheet" href="css/styles.css?v=20260721010000" />
-  <link rel="stylesheet" href="css/widget.css?v=20260721010000" />
+  <link rel="stylesheet" href="css/widget.css?v=20260806" />
   <link rel="stylesheet" href="css/mapa-viento.css?v=20260721010000" />
-  <base target="_blank" />
-</head>
-<body>
+  <link rel="stylesheet" href="css/wc-extra.css?v=20260806" />
 
-  <button class="hamburger-btn" id="hamburger-btn" aria-label="Abrir menú">
-    <span></span><span></span><span></span>
-  </button>
-  <button class="btn-ver-web">🖥️ Ver versión escritorio</button>
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-  <!-- ── SIDEBAR ── -->
-  <aside class="sidebar" id="sidebar">
-    <div class="logo-container">
-      <!-- Logo del proyecto. Coloca tu archivo en assets/logo.png -->
-      <img src="assets/logo.png" alt="Logo del proyecto meteorológico" />
-    </div>
-    <h2>Sistema Meteorológico Antártico</h2>
-
-    <nav class="sidebar-nav" aria-label="Fuentes externas">
-      <div class="sidebar-nav-title">Fuentes oficiales y cartas</div>
-      <div id="sidebar-links"></div>
-    </nav>
-
-    <div class="risk-legend">
-      <h4>Referencia viento (sost.)</h4>
-      <div class="legend-item"><span class="l-bajo">● Bajo:</span><span>1 - 15 kts</span></div>
-      <div class="legend-item"><span class="l-mod">● Moderado:</span><span>16 - 20 kts</span></div>
-      <div class="legend-item"><span class="l-alto">● Alto:</span><span>21 - 25 kts</span></div>
-      <div class="legend-item"><span class="l-peli">● Peligro:</span><span>30+ kts</span></div>
-    </div>
-  </aside>
-
-  <!-- ── MAIN ── -->
-  <main class="main-content">
-    <header>
-      <div class="header-bg-img" id="header-bg-img"></div>
-      <div class="header-overlay"></div>
-      <div class="header-inner">
-        <div class="location-title-wrap">
-          <h1 class="location-title" id="location-title">Bahía Chile - Puerto Soberanía</h1>
-          <div class="location-subtitle" id="location-subtitle">Base Naval Antártica Capitán Arturo Prat</div>
-          <div class="badge-oceanico" id="badge-oceanico" style="display:none"></div>
-        </div>
-        <div class="header-lower">
-          <div class="current-metrics" id="header-metrics">Cargando condiciones actuales…</div>
-          <div class="ops-traffic-light">
-            <span class="ops-title">Estado ops:</span>
-            <div class="ops-light" id="light-botes"><span class="dot"></span> BOTES</div>
-            <div class="ops-light" id="light-vuelo"><span class="dot"></span> VUELO</div>
-            <div class="ops-light" id="light-exterior"><span class="dot"></span> EXTERIOR</div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <section class="astro-bar" aria-label="Datos astronómicos y de actualización">
-      <div class="astro-item"><label>🌅 Amanecer</label><span>05:31</span></div>
-      <div class="astro-item"><label>🌇 Puesta de sol</label><span>20:50</span></div>
-      <div class="astro-item"><label>⌚ Hora local</label><span id="clock">--:--:--</span></div>
-      <div class="astro-item"><label>🏔️ Elevación</label><span>6 m</span></div>
-      <div class="astro-item"><label>📅 Actualización</label><span id="current-date">--/--/----</span></div>
-      <div class="astro-item"><label>🔄 Última corrida</label><span id="last-run">--:-- UTC | --</span></div>
-    </section>
-
-    <nav class="sector-tabs" id="sector-tabs" aria-label="Sectores"></nav>
-    <nav class="days-nav" id="days-nav" aria-label="Días"></nav>
-    <section class="grid-container" id="grid-pronostico"></section>
-
-    <section class="meteotabla-section" aria-label="Meteotabla de pronóstico">
-      <h2 class="mt-titulo">Meteotabla — pronóstico horario</h2>
-      <div id="meteotabla"></div>
-    </section>
-
-    <section class="mapa-viento-section" aria-label="Mapa de viento animado">
-      <h2>Campo de viento — Península Antártica y Paso Drake</h2>
-      <div id="mapa-viento"></div>
-    </section>
-
-    <section class="footer-section">
-      <h2>Sitios de interés</h2>
-      <div class="row-container">
-        <a href="https://www.armada.cl/" class="btn-interest">Armada de Chile</a>
-        <a href="https://www.directemar.cl" class="btn-interest">DIRECTEMAR</a>
-        <a href="https://meteoarmada.directemar.cl/" class="btn-interest">Servicio Meteorológico</a>
-        <a href="https://www.sismologia.cl/" class="btn-interest">Sismología</a>
-        <a href="https://www.horaoficial.cl/" class="btn-interest">Hora oficial</a>
-      </div>
-      <h2 class="sub">Redes sociales (X)</h2>
-      <div class="row-container">
-        <a href="https://x.com/Armada_Chile" class="btn-social">@Armada_Chile</a>
-        <a href="https://x.com/DIRECTEMAR_CHILE" class="btn-social">@DIRECTEMAR_CHILE</a>
-        <a href="https://x.com/Servimet_Armada" class="btn-social">@Servimet_Armada</a>
-        <a href="https://x.com/metarmada_mag" class="btn-social">@metarmada_mag</a>
-        <a href="https://x.com/metarmada_valp" class="btn-social">@metarmada_valp</a>
-      </div>
-    </section>
-
-    <footer class="credits-bar">
-      <p>© 2026</p>
-      <p>Meteorología Base Naval Antártica Capitán Arturo Prat</p>
-    </footer>
-  </main>
-
-  <!-- ── MODAL DETALLE HORARIO ── -->
-  <div id="modalDetalle" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" id="modal-close" aria-label="Cerrar">&times;</span>
-      <h2 class="modal-title" id="modalTitle">Evolución del tiempo por hora</h2>
-      <div class="charts-grid">
-        <div class="chart-box"><canvas id="chartViento"></canvas></div>
-        <div class="chart-box"><canvas id="chartTemp"></canvas></div>
-        <div class="chart-box"><canvas id="chartPrec"></canvas></div>
-        <div class="chart-box"><canvas id="chartHum"></canvas></div>
-        <div class="chart-box"><canvas id="chartCloud"></canvas></div>
-        <div class="chart-box"><canvas id="chartPresion"></canvas></div>
-      </div>
-      <table class="modal-table">
-        <thead>
-          <tr>
-            <th>Hora (UTC)</th><th>Viento/Racha (kts)</th><th>T° Aire/Sens. (°C)</th>
-            <th>Prec (mm)</th><th>Hum (%)</th><th>Nub (%)</th><th>Pres (hPa)</th>
-          </tr>
-        </thead>
-        <tbody id="modalBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- ── WIDGET CALCULADORA ── -->
-  <div id="prat-wc" class="wc-widget">
-    <div class="wc-head">
-      <div class="wc-title">Calculadora de enfriamiento</div>
-      <button id="prat-toggle" aria-label="Colapsar">—</button>
-    </div>
-    <div class="wc-body">
-      <label for="inp-t">Temperatura aire (°C)</label>
-      <input type="number" id="inp-t" placeholder="Ej: -10" step="0.5" />
-      <label for="inp-v">Velocidad viento (nudos)</label>
-      <input type="number" id="inp-v" placeholder="Ej: 20" step="1" />
-      <div class="wc-row">
-        <button class="wc-btn-sync" id="btn-sync">Usar datos actuales</button>
-        <button class="wc-btn-calc" id="btn-calc">Calcular</button>
-      </div>
-      <div id="prat-result-box" class="wc-result">
-        <small>SENSACIÓN TÉRMICA</small>
-        <span class="wc-val" id="res-val">—</span>
-        <span class="wc-desc" id="res-desc">Ingrese datos</span>
-      </div>
-      <p class="wc-note">Basado en la tabla oficial de enfriamiento por viento (Base Prat).</p>
-    </div>
-  </div>
-
-  <!-- Leaflet + leaflet-velocity (globales, deben ir ANTES del módulo) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-velocity@2.1.0/dist/leaflet-velocity.min.js"></script>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Sistema meteorológico de apoyo para sectores antárticos y Paso Drake." />
-  <title>Sistema Meteorológico Antártico | Apoyo a la decisión</title>
-
-  <!-- Librerías externas -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
-
-  <!-- Leaflet + mapa de viento -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-  <!-- Estilos propios -->
-  <link rel="stylesheet" href="css/styles.css?v=20260721010000" />
-  <link rel="stylesheet" href="css/widget.css?v=20260721010000" />
-  <link rel="stylesheet" href="css/mapa-viento.css?v=20260721010000" />
-
-  <!-- ── PWA ── -->
+  <!-- PWA -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#0a2540" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -212,10 +38,8 @@
   <button class="btn-ver-web">🖥️ Ver versión escritorio</button>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-  <!-- ── SIDEBAR ── -->
   <aside class="sidebar" id="sidebar">
     <div class="logo-container">
-      <!-- Logo del proyecto. Coloca tu archivo en assets/logo.png -->
       <img src="assets/logo.png" alt="Logo del proyecto meteorológico" />
     </div>
     <h2>Sistema Meteorológico Antártico</h2>
@@ -234,7 +58,6 @@
     </div>
   </aside>
 
-  <!-- ── MAIN ── -->
   <main class="main-content">
     <header>
       <div class="header-bg-img" id="header-bg-img"></div>
@@ -305,7 +128,6 @@
     </footer>
   </main>
 
-  <!-- ── MODAL DETALLE HORARIO ── -->
   <div id="modalDetalle" class="modal">
     <div class="modal-content">
       <span class="modal-close" id="modal-close" aria-label="Cerrar">&times;</span>
@@ -330,11 +152,14 @@
     </div>
   </div>
 
-  <!-- ── WIDGET CALCULADORA ── -->
+  <!-- WIDGET CALCULADORA -->
   <div id="prat-wc" class="wc-widget">
     <div class="wc-head">
       <div class="wc-title">Calculadora de enfriamiento</div>
-      <button id="prat-toggle" aria-label="Colapsar">—</button>
+      <div class="wc-head-btns">
+        <button id="prat-toggle" aria-label="Minimizar">—</button>
+        <button id="prat-close" aria-label="Cerrar">✕</button>
+      </div>
     </div>
     <div class="wc-body">
       <label for="inp-t">Temperatura aire (°C)</label>
@@ -354,17 +179,15 @@
     </div>
   </div>
 
-  <!-- Leaflet + leaflet-velocity (globales, deben ir ANTES del módulo) -->
+  <!-- Botón para reabrir la calculadora (aparece solo si se cerró) -->
+  <button id="prat-reopen" aria-label="Abrir calculadora" style="display:none">🌡️</button>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-velocity@2.1.0/dist/leaflet-velocity.min.js"></script>
 
-  <!-- Lógica (módulos ES) -->
   <script type="module" src="js/app.js?v=20260721010000"></script>
-
-  <!-- Notificaciones push (Firebase) -->
   <script type="module" src="js/push.js?v=20260806"></script>
 
-  <!-- ── Registro del Service Worker (PWA) ── -->
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
@@ -374,10 +197,5 @@
       });
     }
   </script>
-</body>
-</html>
-  <!-- Lógica (módulos ES) -->
-  <script type="module" src="js/app.js?v=20260721010000"></script>
-  <script type="module" src="js/push.js?v=20260806"></script>
 </body>
 </html>
