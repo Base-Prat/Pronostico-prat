@@ -80,12 +80,34 @@ export async function initCalculadora() {
     btnCalc.click();
   });
 
-  // Colapsar / expandir el widget.
-  const widget = document.getElementById("prat-wc");
-  const toggle = document.getElementById("prat-toggle");
+  // ── Minimizar / restaurar / cerrar / reabrir el widget ──
+  const widget  = document.getElementById("prat-wc");
+  const toggle  = document.getElementById("prat-toggle");
+  const btnClose = document.getElementById("prat-close");
+  const btnReopen = document.getElementById("prat-reopen");
+  const body = widget?.querySelector(".wc-body");
+
+  // Minimizar / restaurar: oculta el cuerpo, deja la barra de título.
   toggle?.addEventListener("click", (e) => {
     e.stopPropagation();
-    widget.classList.toggle("collapsed");
-    toggle.textContent = widget.classList.contains("collapsed") ? "+" : "—";
+    const oculto = body.style.display === "none";
+    body.style.display = oculto ? "" : "none";
+    toggle.textContent = oculto ? "—" : "+";
+  });
+
+  // Cerrar (✕): oculta todo el widget y muestra el botón flotante para reabrir.
+  btnClose?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    widget.style.display = "none";
+    if (btnReopen) btnReopen.style.display = "flex";
+  });
+
+  // Reabrir: vuelve a mostrar la calculadora expandida.
+  btnReopen?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    widget.style.display = "";
+    body.style.display = "";
+    if (toggle) toggle.textContent = "—";
+    btnReopen.style.display = "none";
   });
 }
