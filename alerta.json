@@ -1,0 +1,11 @@
+{
+  "generado": "2026-08-06T21:18:27.491727+00:00",
+  "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
+  "umbrales": {
+    "visibilidad_km": 1.0,
+    "temp_min_c": -10.0,
+    "viento_racha_kt": 25
+  },
+  "hay_alerta": false,
+  "avisos": []
+}
