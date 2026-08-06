@@ -2,16 +2,17 @@
 # ════════════════════════════════════════════════════════════════
 #  VIGILANTE METEOROLÓGICO — Base Prat (Bahía Chile)
 #  Lee el CSV público de pronóstico y detecta condiciones de aviso:
-#    · Visibilidad  < 1 km   (se evalúa el valor MENOR del rango)
-#    · Temperatura  < -10 °C  (se evalúa la MÍNIMA del tramo)
-#    · Viento (racha) > 25 kt (se evalúa la RACHA)
-#  Corre en GitHub Actions cada hora. En esta Etapa 3 solo DETECTA
-#  y deja el resultado en 'alerta.json'. El envío real es Etapa 4.
+#    · Visibilidad  < 1 km   (valor MENOR del rango)
+#    · Temperatura  < -10 °C  (MÍNIMA del tramo)
+#    · Viento (racha) > 25 kt (RACHA)
+#  Si hay alerta, envía notificación push por FCM a los dispositivos
+#  registrados en Firestore. Corre en GitHub Actions cada hora.
 # ════════════════════════════════════════════════════════════════
 
 import csv
 import io
 import json
+import os
 import re
 import sys
 import urllib.request
@@ -28,11 +29,14 @@ CSV_URL = (
 # ── Umbrales de aviso ────────────────────────────────────────────
 VIS_MIN_KM = 1.0     # avisar si visibilidad < 1 km
 TEMP_MIN_C = -10.0   # avisar si temperatura < -10 °C
-VIENTO_KT = 10       # avisar si racha > 25 kt
+VIENTO_KT = 10       # PRUEBA temporal (normal: 25)
+
+# Evita reenviar el mismo aviso una y otra vez cada hora: se guarda
+# una "firma" del último aviso enviado en este archivo.
+ESTADO_PATH = "estado_alerta.txt"
 
 
 def descargar_csv(url):
-    """Descarga el CSV publicado y devuelve la lista de filas (dict)."""
     req = urllib.request.Request(url, headers={"User-Agent": "vigilante-prat"})
     with urllib.request.urlopen(req, timeout=30) as resp:
         texto = resp.read().decode("utf-8")
@@ -40,7 +44,6 @@ def descargar_csv(url):
 
 
 def parse_visibilidad(txt):
-    """'4/8 KM nieve débil' -> 4.0 (valor menor del rango, en km)."""
     m = re.search(r"(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)", txt or "")
     if m:
         return min(float(m.group(1)), float(m.group(2)))
@@ -49,13 +52,11 @@ def parse_visibilidad(txt):
 
 
 def parse_temp_min(txt):
-    """'-12°C / -8°C' -> -12.0 (la mínima del tramo)."""
     nums = re.findall(r"-?\d+(?:\.\d+)?", txt or "")
     return min(float(n) for n in nums) if nums else None
 
 
 def parse_racha(txt):
-    """'W/NW 6/12 KT' -> 12 (la racha, segundo número del par)."""
     m = re.search(r"(\d+)\s*/\s*(\d+)\s*KT", (txt or "").upper())
     if m:
         return int(m.group(2))
@@ -63,41 +64,102 @@ def parse_racha(txt):
 
 
 def evaluar(filas):
-    """Recorre los tramos y junta las condiciones que superan umbral."""
     avisos = []
     for f in filas:
-        dia = (f.get("Día") or "").strip()
-        tramo = (f.get("Tramo") or "").strip()
-        cuando = f"{dia} · {tramo}"
+        cuando = f"{(f.get('Día') or '').strip()} · {(f.get('Tramo') or '').strip()}"
 
         vis = parse_visibilidad(f.get("Visibilidad"))
         if vis is not None and vis < VIS_MIN_KM:
-            avisos.append({
-                "tipo": "visibilidad",
-                "cuando": cuando,
-                "valor": f"{vis:g} km",
-                "detalle": (f.get("Visibilidad") or "").strip(),
-            })
+            avisos.append({"tipo": "visibilidad", "cuando": cuando,
+                           "valor": f"{vis:g} km", "detalle": (f.get("Visibilidad") or "").strip()})
 
         tmin = parse_temp_min(f.get("Temp"))
         if tmin is not None and tmin < TEMP_MIN_C:
-            avisos.append({
-                "tipo": "temperatura",
-                "cuando": cuando,
-                "valor": f"{tmin:g} °C",
-                "detalle": (f.get("Temp") or "").strip(),
-            })
+            avisos.append({"tipo": "temperatura", "cuando": cuando,
+                           "valor": f"{tmin:g} °C", "detalle": (f.get("Temp") or "").strip()})
 
         racha = parse_racha(f.get("Viento"))
         if racha is not None and racha > VIENTO_KT:
-            avisos.append({
-                "tipo": "viento",
-                "cuando": cuando,
-                "valor": f"{racha} kt (racha)",
-                "detalle": (f.get("Viento") or "").strip(),
-            })
+            avisos.append({"tipo": "viento", "cuando": cuando,
+                           "valor": f"{racha} kt (racha)", "detalle": (f.get("Viento") or "").strip()})
 
     return avisos
+
+
+def construir_mensaje(avisos):
+    """Arma el título y cuerpo de la notificación a partir de los avisos."""
+    tipos = sorted(set(a["tipo"] for a in avisos))
+    iconos = {"viento": "💨 Viento", "temperatura": "🥶 Frío extremo", "visibilidad": "🌫️ Visibilidad"}
+    titulo = "⚠️ Aviso meteorológico — Base Prat"
+    partes = [iconos.get(t, t) for t in tipos]
+    # Toma el primer aviso de cada tipo para el detalle
+    detalles = []
+    for t in tipos:
+        primero = next(a for a in avisos if a["tipo"] == t)
+        detalles.append(f"{iconos.get(t, t)}: {primero['valor']} ({primero['cuando']})")
+    cuerpo = " | ".join(detalles)
+    return titulo, cuerpo
+
+
+def enviar_notificaciones(titulo, cuerpo):
+    """Lee tokens de Firestore y envía la notificación por FCM."""
+    import firebase_admin
+    from firebase_admin import credentials, firestore, messaging
+
+    cred_json = os.environ.get("FIREBASE_CREDENTIALS")
+    if not cred_json:
+        print("ERROR: falta FIREBASE_CREDENTIALS en el entorno.", file=sys.stderr)
+        return 0
+
+    print("Conectando con Firebase...")
+    try:
+        cred = credentials.Certificate(json.loads(cred_json))
+        firebase_admin.initialize_app(cred)
+        db = firestore.client()
+        print("Conexion con Firebase OK.")
+    except Exception as e:
+        print(f"ERROR al conectar con Firebase: {e}", file=sys.stderr)
+        return 0
+
+    try:
+        tokens = [d.id for d in db.collection("tokens").stream()]
+    except Exception as e:
+        print(f"ERROR al leer tokens de Firestore: {e}", file=sys.stderr)
+        return 0
+
+    print(f"Dispositivos encontrados en Firestore: {len(tokens)}")
+    if not tokens:
+        print("No hay dispositivos registrados.")
+        return 0
+
+    enviados = 0
+    invalidos = []
+    for tk in tokens:
+        try:
+            msg = messaging.Message(
+                notification=messaging.Notification(title=titulo, body=cuerpo),
+                token=tk,
+            )
+            messaging.send(msg)
+            enviados += 1
+            print(f"  -> Enviado a token ...{tk[-10:]}")
+        except Exception as e:
+            print(f"  -> Token invalido ...{tk[-10:]}: {e}")
+            invalidos.append(tk)
+
+    for tk in invalidos:
+        try:
+            db.collection("tokens").document(tk).delete()
+        except Exception:
+            pass
+
+    print(f"Notificaciones enviadas: {enviados} de {len(tokens)}.")
+    return enviados
+
+
+def firma_avisos(avisos):
+    """Firma única del conjunto de avisos, para no repetir envíos."""
+    return "|".join(sorted(f"{a['tipo']}:{a['cuando']}:{a['valor']}" for a in avisos))
 
 
 def main():
@@ -112,25 +174,38 @@ def main():
     resultado = {
         "generado": datetime.now(timezone.utc).isoformat(),
         "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
-        "umbrales": {
-            "visibilidad_km": VIS_MIN_KM,
-            "temp_min_c": TEMP_MIN_C,
-            "viento_racha_kt": VIENTO_KT,
-        },
+        "umbrales": {"visibilidad_km": VIS_MIN_KM, "temp_min_c": TEMP_MIN_C, "viento_racha_kt": VIENTO_KT},
         "hay_alerta": len(avisos) > 0,
         "avisos": avisos,
     }
-
     with open("alerta.json", "w", encoding="utf-8") as fh:
         json.dump(resultado, fh, ensure_ascii=False, indent=2)
 
-    # Resumen legible en el log de la Action.
-    if avisos:
-        print(f"⚠️  {len(avisos)} aviso(s) detectado(s):")
-        for a in avisos:
-            print(f"   · [{a['tipo']}] {a['cuando']} → {a['valor']}  ({a['detalle']})")
-    else:
+    if not avisos:
         print("✅ Sin condiciones de aviso en el pronóstico actual.")
+        return
+
+    print(f"⚠️  {len(avisos)} aviso(s) detectado(s):")
+    for a in avisos:
+        print(f"   · [{a['tipo']}] {a['cuando']} → {a['valor']}")
+
+    # ── Anti-repetición: no reenviar si el aviso es idéntico al anterior ──
+    firma = firma_avisos(avisos)
+    anterior = ""
+    if os.path.exists(ESTADO_PATH):
+        with open(ESTADO_PATH, encoding="utf-8") as fh:
+            anterior = fh.read().strip()
+
+    if firma == anterior:
+        print("El mismo aviso ya fue enviado antes; no se reenvía.")
+        return
+
+    titulo, cuerpo = construir_mensaje(avisos)
+    print(f"Enviando: {titulo} — {cuerpo}")
+    enviar_notificaciones(titulo, cuerpo)
+
+    with open(ESTADO_PATH, "w", encoding="utf-8") as fh:
+        fh.write(firma)
 
 
 if __name__ == "__main__":
