@@ -28,7 +28,7 @@ CSV_URL = (
 # ── Umbrales de aviso ────────────────────────────────────────────
 VIS_MIN_KM = 1.0     # avisar si visibilidad < 1 km
 TEMP_MIN_C = -10.0   # avisar si temperatura < -10 °C
-VIENTO_KT = 25       # avisar si racha > 25 kt
+VIENTO_KT = 10       # avisar si racha > 25 kt
 
 
 def descargar_csv(url):
