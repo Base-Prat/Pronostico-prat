@@ -1,5 +1,5 @@
 {
-  "generado": "2026-08-09T18:58:51.638779+00:00",
+  "generado": "2026-08-09T19:46:25.057861+00:00",
   "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
   "umbrales": {
     "visibilidad_km": 1.0,
@@ -10,357 +10,381 @@
   "avisos": [
     {
       "tipo": "viento",
-      "cuando": "Viernes 07 · 06 a 09 Hora Local",
-      "valor": "12 kt (racha)",
-      "detalle": "W/NW 6/12 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Viernes 07 · 09 a 12 Hora Local",
+      "cuando": "Domingo 09 · 09 a 12 Hora Local",
       "valor": "15 kt (racha)",
-      "detalle": "W/NW 10/15 KT"
+      "detalle": "W/SW 10/15 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Viernes 07 · 12 a 15 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "W/NW 10/15 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Viernes 07 · 15 a 18 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "Weste 10/15 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Viernes 07 · 18 a 21 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "Weste 10/15 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Viernes 07 · 21 a 24 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "Weste 10/15 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 08 · 00 a 03 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "Weste 10/15 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 08 · 03 a 06 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "W/SW 15/20 KT rachas 30 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 08 · 06 a 09 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/SW 20/25 KT rachas 35 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 08 · 09 a 12 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "SW 15/20 KT rachas 30 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 08 · 12 a 15 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "S/SW 15/20 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 08 · 15 a 18 Hora Local",
+      "cuando": "Domingo 09 · 12 a 15 Hora Local",
       "valor": "18 kt (racha)",
-      "detalle": "S/SW 12/18 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 08 · 18 a 21 Hora Local",
-      "valor": "14 kt (racha)",
-      "detalle": "S/SW 7/14 KT"
+      "detalle": "W/SW 12/18 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 09 · 15 a 18 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "W/SW 10/15 KT rachas 25 KT"
+      "valor": "25 kt (racha)",
+      "detalle": "S/SW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 09 · 18 a 21 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "W/SW 15/20 KT rachas 35 KT"
+      "valor": "25 kt (racha)",
+      "detalle": "S/SW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 09 · 21 a 24 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "W/SW 15/20 KT rachas 40 KT"
+      "valor": "25 kt (racha)",
+      "detalle": "S/SW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 00 a 03 Hora Local",
       "valor": "20 kt (racha)",
-      "detalle": "W/SW 15/20 KT rachas 40 KT"
+      "detalle": "S/SW 15/20 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 03 a 06 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "Weste 15/20 KT rachas 40 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Lunes 10 · 06 a 09 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "Weste 15/20 KT rachas 35 KT"
+      "valor": "12 kt (racha)",
+      "detalle": "W/SW 6/12 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 09 a 12 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "W/SW 15/20 KT rachas 30 KT"
+      "valor": "30 kt (racha)",
+      "detalle": "Este 20/30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 12 a 15 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "SW 20/25 KT rachas 45 KT"
+      "valor": "40 kt (racha)",
+      "detalle": "Este 30/40 KT rachas 55 KT"
+    },
+    {
+      "tipo": "temperatura",
+      "cuando": "Lunes 10 · 15 a 18 Hora Local",
+      "valor": "-11 °C",
+      "detalle": "-11°C / -10°C"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 15 a 18 Hora Local",
       "valor": "25 kt (racha)",
-      "detalle": "SW 20/25 KT rachas 45 KT"
+      "detalle": "E/NE 15/25 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 18 a 21 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/SW 20/25 KT rachas 40 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "NE 10/15 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 21 a 24 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/SW 20/25 KT rachas 45 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "Norte 10/15 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Martes 11 · 00 a 03 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/SW 20/25 KT rachas 45 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Martes 11 · 03 a 06 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "W/SW 15/20 KT rachas 35 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Martes 11 · 06 a 09 Hora Local",
       "valor": "18 kt (racha)",
-      "detalle": "SW 12/18 KT rachas 40 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Martes 11 · 09 a 12 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "SW 10/15 KT rachas 25 KT"
+      "detalle": "Norte 12/18 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Martes 11 · 12 a 15 Hora Local",
       "valor": "15 kt (racha)",
-      "detalle": "S/SW 10/15 KT rachas 25 KT"
+      "detalle": "SE 10/15 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Martes 11 · 15 a 18 Hora Local",
-      "valor": "16 kt (racha)",
-      "detalle": "S/SE 8/16 KT rachas 30 KT"
+      "valor": "20 kt (racha)",
+      "detalle": "E/SE 15/20 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Miércoles 12 · 15 a 18 Hora Local",
+      "cuando": "Martes 11 · 18 a 21 Hora Local",
+      "valor": "15 kt (racha)",
+      "detalle": "Este 10/15 KT rachas 25 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Miércoles 12 · 18 a 21 Hora Local",
       "valor": "12 kt (racha)",
       "detalle": "W/NW 6/12 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Miércoles 12 · 21 a 24 Hora Local",
+      "valor": "14 kt (racha)",
+      "detalle": "W/NW 7/14 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Jueves 13 · 00 a 03 Hora Local",
-      "valor": "12 kt (racha)",
-      "detalle": "W/NW 6/12 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Jueves 13 · 03 a 06 Hora Local",
       "valor": "15 kt (racha)",
       "detalle": "W/NW 10/15 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Jueves 13 · 06 a 09 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "W/NW 10/15 KT rachas 25 KT"
+      "cuando": "Jueves 13 · 03 a 06 Hora Local",
+      "valor": "14 kt (racha)",
+      "detalle": "W/NW 7/14 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Jueves 13 · 09 a 12 Hora Local",
-      "valor": "18 kt (racha)",
-      "detalle": "Weste 12/18 KT rachas 30 KT"
+      "valor": "12 kt (racha)",
+      "detalle": "W/SW 6/12 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Jueves 13 · 12 a 15 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "SW 15/20 KT rachas 35 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "W/SW 10/15 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Jueves 13 · 15 a 18 Hora Local",
-      "valor": "20 kt (racha)",
-      "detalle": "SW 15/20 KT rachas 35 KT"
+      "valor": "18 kt (racha)",
+      "detalle": "W/SW 12/18 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Jueves 13 · 18 a 21 Hora Local",
-      "valor": "12 kt (racha)",
-      "detalle": "W/SW 6/12 KT rachas 30 KT"
+      "valor": "20 kt (racha)",
+      "detalle": "SW 15/20 KT rachas 40 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Jueves 13 · 21 a 24 Hora Local",
+      "valor": "25 kt (racha)",
+      "detalle": "SW 20/25 KT rachas 40 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Viernes 14 · 00 a 03 Hora Local",
+      "valor": "25 kt (racha)",
+      "detalle": "SW 20/25 KT rachas 40 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Viernes 14 · 03 a 06 Hora Local",
+      "valor": "20 kt (racha)",
+      "detalle": "W/SW 15/20 KT rachas 45 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Viernes 14 · 06 a 09 Hora Local",
+      "valor": "25 kt (racha)",
+      "detalle": "W/SW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 14 · 09 a 12 Hora Local",
-      "valor": "12 kt (racha)",
-      "detalle": "W/NW 6/12 KT"
+      "valor": "25 kt (racha)",
+      "detalle": "W/SW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 14 · 12 a 15 Hora Local",
-      "valor": "18 kt (racha)",
-      "detalle": "W/NW 12/18 KT rachas 25 KT"
+      "valor": "20 kt (racha)",
+      "detalle": "W/SW 15/20 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 14 · 15 a 18 Hora Local",
       "valor": "20 kt (racha)",
-      "detalle": "W/NW 15/20 KT rachas 30 KT"
+      "detalle": "Weste 15/20 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 14 · 18 a 21 Hora Local",
-      "valor": "18 kt (racha)",
-      "detalle": "W/NW 12/18 KT rachas 30 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "Weste 10/15 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 14 · 21 a 24 Hora Local",
-      "valor": "15 kt (racha)",
-      "detalle": "W/NW 10/15 KT rachas 30 KT"
+      "valor": "18 kt (racha)",
+      "detalle": "Weste 12/18 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 00 a 03 Hora Local",
-      "valor": "18 kt (racha)",
-      "detalle": "W/NW 12/18 KT rachas 30 KT"
+      "valor": "20 kt (racha)",
+      "detalle": "Weste 15/20 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 03 a 06 Hora Local",
       "valor": "20 kt (racha)",
-      "detalle": "W/NW 15/20 KT rachas 30 KT"
+      "detalle": "Weste 15/20 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 06 a 09 Hora Local",
       "valor": "20 kt (racha)",
-      "detalle": "W/NW 15/20 KT rachas 30 KT"
+      "detalle": "Weste 15/20 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 09 a 12 Hora Local",
-      "valor": "18 kt (racha)",
-      "detalle": "W/NW 12/18 KT rachas 30 KT"
+      "valor": "25 kt (racha)",
+      "detalle": "Weste 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 12 a 15 Hora Local",
-      "valor": "18 kt (racha)",
-      "detalle": "W/NW 12/18 KT rachas 30 KT"
+      "valor": "20 kt (racha)",
+      "detalle": "Weste 15/20 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 15 a 18 Hora Local",
-      "valor": "18 kt (racha)",
-      "detalle": "W/NW 12/18 KT rachas 30 KT"
+      "valor": "20 kt (racha)",
+      "detalle": "Weste 15/20 KT rachas 35 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 18 a 21 Hora Local",
       "valor": "20 kt (racha)",
-      "detalle": "W/NW 15/20 KT rachas 35 KT"
+      "detalle": "W/SW 15/20 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 15 · 21 a 24 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 35 KT"
+      "valor": "20 kt (racha)",
+      "detalle": "W/SW 15/20 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 00 a 03 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 40 KT"
+      "valor": "18 kt (racha)",
+      "detalle": "W/SW 12/18 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 03 a 06 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "W/SW 10/15 KT rachas 25 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 06 a 09 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "valor": "14 kt (racha)",
+      "detalle": "Weste 7/14 KT rachas 25 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 09 a 12 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "Weste 10/15 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 12 a 15 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "Weste 10/15 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 15 a 18 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "W/NW 10/15 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 18 a 21 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "W/NW 20/25 KT rachas 40 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "W/NW 10/15 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Domingo 16 · 21 a 24 Hora Local",
-      "valor": "25 kt (racha)",
-      "detalle": "NW 20/25 KT rachas 40 KT"
+      "valor": "15 kt (racha)",
+      "detalle": "W/NW 10/15 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 00 a 03 Hora Local",
+      "valor": "15 kt (racha)",
+      "detalle": "W/NW 10/15 KT rachas 25 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 03 a 06 Hora Local",
+      "valor": "15 kt (racha)",
+      "detalle": "Weste 10/15 KT rachas 30 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 06 a 09 Hora Local",
+      "valor": "12 kt (racha)",
+      "detalle": "Weste 6/12 KT rachas 30 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 12 a 15 Hora Local",
+      "valor": "12 kt (racha)",
+      "detalle": "Weste 6/12 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 15 a 18 Hora Local",
+      "valor": "12 kt (racha)",
+      "detalle": "Weste 6/12 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 18 a 21 Hora Local",
+      "valor": "12 kt (racha)",
+      "detalle": "W/SW 6/12 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 21 a 24 Hora Local",
+      "valor": "14 kt (racha)",
+      "detalle": "E/SE 7/14 KT rachas 30 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 06 a 09 Hora Local",
+      "valor": "14 kt (racha)",
+      "detalle": "N/NE 7/14 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 09 a 12 Hora Local",
+      "valor": "15 kt (racha)",
+      "detalle": "N/NE 10/15 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 12 a 15 Hora Local",
+      "valor": "15 kt (racha)",
+      "detalle": "Norte 10/15 KT rachas 25 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 15 a 18 Hora Local",
+      "valor": "15 kt (racha)",
+      "detalle": "Norte 10/15 KT rachas 25 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 18 a 21 Hora Local",
+      "valor": "15 kt (racha)",
+      "detalle": "Norte 10/15 KT rachas 25 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 21 a 24 Hora Local",
+      "valor": "14 kt (racha)",
+      "detalle": "Norte 7/14 KT rachas 30 KT"
     }
   ]
 }
