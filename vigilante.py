@@ -4,12 +4,13 @@
 #  Lee el CSV público de pronóstico y detecta condiciones de aviso:
 #    · Visibilidad  < 1 km   (valor MENOR del rango)
 #    · Temperatura  < -10 °C  (MÍNIMA del tramo)
-#    · Viento (racha) > 24 kt (RACHA)
+#    · Viento (sostenido) > 24 kt
 #  Si hay alerta, envía notificación push por FCM a los dispositivos
 #  registrados en Firestore. Corre en GitHub Actions cada hora.
 # ════════════════════════════════════════════════════════════════
 
 import csv
+import hashlib
 import io
 import json
 import os
