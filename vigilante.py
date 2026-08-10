@@ -29,7 +29,7 @@ CSV_URL = (
 # ── Umbrales de aviso ────────────────────────────────────────────
 VIS_MIN_KM = 1.0     # avisar si visibilidad < 1 km
 TEMP_MIN_C = -10.0   # avisar si temperatura < -10 °C
-VIENTO_KT = 10       # PRUEBA temporal (normal: 24)
+VIENTO_KT = 24       # PRUEBA temporal (normal: 24)
 
 # Evita reenviar el mismo aviso una y otra vez cada hora: se guarda
 # una "firma" del último aviso enviado en este archivo.
@@ -56,11 +56,14 @@ def parse_temp_min(txt):
     return min(float(n) for n in nums) if nums else None
 
 
-def parse_racha(txt):
-    m = re.search(r"(\d+)\s*/\s*(\d+)\s*KT", (txt or "").upper())
-    if m:
-        return int(m.group(2))
-    return None
+def parse_viento_sostenido(txt):
+    if not txt:
+        return None
+    txt_upper = txt.upper()
+    # Elimina todo lo que diga "RACHAS..."
+    texto_sostenido = re.sub(r"RACHAS?.*", "", txt_upper)
+    nums = re.findall(r"\d+", texto_sostenido)
+    return max(int(n) for n in nums) if nums else None
 
 
 def evaluar(filas):
@@ -78,10 +81,10 @@ def evaluar(filas):
             avisos.append({"tipo": "temperatura", "cuando": cuando,
                            "valor": f"{tmin:g} °C", "detalle": (f.get("Temp") or "").strip()})
 
-        racha = parse_racha(f.get("Viento"))
-        if racha is not None and racha > VIENTO_KT:
+        v_sostenido = parse_viento_sostenido(f.get("Viento"))
+        if v_sostenido is not None and v_sostenido > VIENTO_KT:
             avisos.append({"tipo": "viento", "cuando": cuando,
-                           "valor": f"{racha} kt (racha)", "detalle": (f.get("Viento") or "").strip()})
+                           "valor": f"{v_sostenido} kt (sostenido)", "detalle": (f.get("Viento") or "").strip()})
 
     return avisos
 
@@ -157,9 +160,9 @@ def enviar_notificaciones(titulo, cuerpo):
     return enviados
 
 
-def firma_avisos(avisos):
-    """Firma única del conjunto de avisos, para no repetir envíos."""
-    return "|".join(sorted(f"{a['tipo']}:{a['cuando']}:{a['valor']}" for a in avisos))
+def firma_avisos(filas):
+    contenido = json.dumps(filas, sort_keys=True)
+    return hashlib.md5(contenido.encode("utf-8")).hexdigest()
 
 
 def main():
@@ -190,7 +193,7 @@ def main():
         print(f"   · [{a['tipo']}] {a['cuando']} → {a['valor']}")
 
     # ── Anti-repetición: no reenviar si el aviso es idéntico al anterior ──
-    firma = firma_avisos(avisos)
+    firma = firma_avisos(filas)
     anterior = ""
     if os.path.exists(ESTADO_PATH):
         with open(ESTADO_PATH, encoding="utf-8") as fh:
