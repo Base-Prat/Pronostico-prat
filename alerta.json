@@ -1,5 +1,5 @@
 {
-  "generado": "2026-08-10T20:59:14.129042+00:00",
+  "generado": "2026-08-10T21:56:01.974919+00:00",
   "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
   "umbrales": {
     "visibilidad_km": 1.0,
@@ -29,8 +29,8 @@
     {
       "tipo": "viento",
       "cuando": "Lunes 10 · 15 a 18 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "E/NE 15/25 KT rachas 35 KT"
+      "valor": "30 kt (sostenido)",
+      "detalle": "E/NE 20/30 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
