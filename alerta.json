@@ -1,5 +1,5 @@
 {
-  "generado": "2026-08-12T13:42:41.812853+00:00",
+  "generado": "2026-08-12T15:12:35.984112+00:00",
   "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
   "umbrales": {
     "visibilidad_km": 1.0,
@@ -10,15 +10,81 @@
   "avisos": [
     {
       "tipo": "viento",
-      "cuando": "Lunes 17 · 09 a 12 Hora Local",
+      "cuando": "Lunes 17 · 00 a 03 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "E/SE 20/25 KT rachas 45 KT"
+      "detalle": "NW 20/25 KT rachas 30 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Lunes 17 · 12 a 15 Hora Local",
+      "cuando": "Lunes 17 · 15 a 18 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "NE 20/25 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 18 a 21 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "NE 20/25 KT rachas 35 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 17 · 21 a 24 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "NE 20/25 KT rachas 40 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 00 a 03 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "NE 15/25 KT rachas 45 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 03 a 06 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "Este 30/40 KT rachas 65 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 06 a 09 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "Este 30/40 KT rachas 65 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 09 a 12 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "Este 30/40 KT rachas 70 KT"
+    },
+    {
+      "tipo": "temperatura",
+      "cuando": "Martes 18 · 12 a 15 Hora Local",
+      "valor": "-11 °C",
+      "detalle": "-11°C / -10°C"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 12 a 15 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "Este 30/40 KT rachas 70 KT"
+    },
+    {
+      "tipo": "temperatura",
+      "cuando": "Martes 18 · 15 a 18 Hora Local",
+      "valor": "-11 °C",
+      "detalle": "-11°C / -10°C"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 15 a 18 Hora Local",
       "valor": "35 kt (sostenido)",
-      "detalle": "Este 25/35 KT rachas 50 KT"
+      "detalle": "E/SE 25/35 KT rachas 60 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 18 · 18 a 21 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "Este 15/25 KT rachas 50 KT"
     }
   ]
 }
