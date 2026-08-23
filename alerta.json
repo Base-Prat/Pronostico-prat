@@ -1,5 +1,5 @@
 {
-  "generado": "2026-08-23T10:37:34.434768+00:00",
+  "generado": "2026-08-23T11:33:33.643583+00:00",
   "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
   "umbrales": {
     "visibilidad_km": 1.0,
@@ -11,26 +11,62 @@
     {
       "tipo": "viento",
       "cuando": "Miércoles 26 · 09 a 12 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Este 20/25 KT rachas 50 KT"
+      "valor": "30 kt (sostenido)",
+      "detalle": "Este 20/30 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Miércoles 26 · 12 a 15 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Este 20/25 KT rachas 50 KT"
+      "valor": "35 kt (sostenido)",
+      "detalle": "Este 25/35 KT rachas 50 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Miércoles 26 · 15 a 18 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Este 20/25 KT rachas 45 KT"
+      "valor": "35 kt (sostenido)",
+      "detalle": "Este 25/35 KT rachas 55 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Miércoles 26 · 18 a 21 Hora Local",
+      "valor": "35 kt (sostenido)",
+      "detalle": "Este 25/35 KT rachas 55 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Miércoles 26 · 21 a 24 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "Este 20/25 KT rachas 50 KT"
+      "detalle": "Este 20/25 KT rachas 40 KT"
+    },
+    {
+      "tipo": "temperatura",
+      "cuando": "Martes 01 · 15 a 18 Hora Local",
+      "valor": "-11 °C",
+      "detalle": "-11°C / -10°C"
+    },
+    {
+      "tipo": "temperatura",
+      "cuando": "Martes 01 · 18 a 21 Hora Local",
+      "valor": "-14 °C",
+      "detalle": "-14°C / -12°C"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 01 · 18 a 21 Hora Local",
+      "valor": "35 kt (sostenido)",
+      "detalle": "Este 25/35 KT rachas 60 KT"
+    },
+    {
+      "tipo": "temperatura",
+      "cuando": "Martes 01 · 21 a 24 Hora Local",
+      "valor": "-15 °C",
+      "detalle": "-15°C / -14°C"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Martes 01 · 21 a 24 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "Este 30/40 KT rachas 65 KT"
     }
   ]
 }
