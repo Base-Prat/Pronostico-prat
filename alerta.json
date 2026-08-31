@@ -1,5 +1,5 @@
 {
-  "generado": "2026-08-30T23:27:27.589409+00:00",
+  "generado": "2026-08-31T05:27:59.705801+00:00",
   "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
   "umbrales": {
     "visibilidad_km": 1.0,
@@ -24,7 +24,7 @@
       "tipo": "viento",
       "cuando": "Martes 01 · 03 a 06 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 35 KT"
+      "detalle": "Weste 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
@@ -42,19 +42,19 @@
       "tipo": "temperatura",
       "cuando": "Martes 01 · 15 a 18 Hora Local",
       "valor": "-11 °C",
-      "detalle": "-11°C / -10°C"
+      "detalle": "-11°C / -9°C"
     },
     {
       "tipo": "viento",
       "cuando": "Martes 01 · 15 a 18 Hora Local",
-      "valor": "30 kt (sostenido)",
-      "detalle": "Weste 20/30 KT rachas 45 KT"
+      "valor": "25 kt (sostenido)",
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "temperatura",
       "cuando": "Martes 01 · 18 a 21 Hora Local",
-      "valor": "-13 °C",
-      "detalle": "-13°C / -12°C"
+      "valor": "-12 °C",
+      "detalle": "-12°C / -11°C"
     },
     {
       "tipo": "viento",
@@ -65,8 +65,8 @@
     {
       "tipo": "temperatura",
       "cuando": "Martes 01 · 21 a 24 Hora Local",
-      "valor": "-12 °C",
-      "detalle": "-12°C / -11°C"
+      "valor": "-14 °C",
+      "detalle": "-14°C / -13°C"
     },
     {
       "tipo": "temperatura",
@@ -77,8 +77,8 @@
     {
       "tipo": "temperatura",
       "cuando": "Miércoles 02 · 03 a 06 Hora Local",
-      "valor": "-13 °C",
-      "detalle": "-13°C / -12°C"
+      "valor": "-14 °C",
+      "detalle": "-14°C / -13°C"
     },
     {
       "tipo": "temperatura",
@@ -107,36 +107,24 @@
     {
       "tipo": "temperatura",
       "cuando": "Miércoles 02 · 18 a 21 Hora Local",
-      "valor": "-13 °C",
-      "detalle": "-13°C / -12°C"
+      "valor": "-11 °C",
+      "detalle": "-11°C / -10°C"
     },
     {
       "tipo": "temperatura",
       "cuando": "Miércoles 02 · 21 a 24 Hora Local",
-      "valor": "-12 °C",
-      "detalle": "-12°C / -11°C"
-    },
-    {
-      "tipo": "temperatura",
-      "cuando": "Jueves 03 · 00 a 03 Hora Local",
       "valor": "-11 °C",
       "detalle": "-11°C / -10°C"
     },
     {
       "tipo": "temperatura",
       "cuando": "Jueves 03 · 03 a 06 Hora Local",
-      "valor": "-11 °C",
-      "detalle": "-11°C / -10°C"
+      "valor": "-12 °C",
+      "detalle": "-12°C / -11°C"
     },
     {
       "tipo": "temperatura",
       "cuando": "Jueves 03 · 06 a 09 Hora Local",
-      "valor": "-11 °C",
-      "detalle": "-11°C / -10°C"
-    },
-    {
-      "tipo": "temperatura",
-      "cuando": "Jueves 03 · 12 a 15 Hora Local",
       "valor": "-11 °C",
       "detalle": "-11°C / -10°C"
     },
@@ -155,8 +143,8 @@
     {
       "tipo": "temperatura",
       "cuando": "Jueves 03 · 21 a 24 Hora Local",
-      "valor": "-11 °C",
-      "detalle": "-11°C / -10°C"
+      "valor": "-12 °C",
+      "detalle": "-12°C / -11°C"
     },
     {
       "tipo": "temperatura",
@@ -167,110 +155,80 @@
     {
       "tipo": "temperatura",
       "cuando": "Viernes 04 · 03 a 06 Hora Local",
-      "valor": "-12 °C",
-      "detalle": "-12°C / -11°C"
-    },
-    {
-      "tipo": "temperatura",
-      "cuando": "Viernes 04 · 06 a 09 Hora Local",
       "valor": "-11 °C",
       "detalle": "-11°C / -10°C"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Domingo 06 · 00 a 03 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 40 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Domingo 06 · 03 a 06 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 40 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Domingo 06 · 06 a 09 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 40 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Domingo 06 · 18 a 21 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 35 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Domingo 06 · 21 a 24 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 35 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Lunes 07 · 00 a 03 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 07 · 03 a 06 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 45 KT"
+      "detalle": "W/NW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 07 · 06 a 09 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 40 KT"
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 07 · 09 a 12 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "W/NW 20/25 KT rachas 40 KT"
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 07 · 12 a 15 Hora Local",
-      "valor": "30 kt (sostenido)",
-      "detalle": "W/NW 20/30 KT rachas 45 KT"
+      "valor": "25 kt (sostenido)",
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 07 · 15 a 18 Hora Local",
-      "valor": "30 kt (sostenido)",
-      "detalle": "Weste 20/30 KT rachas 50 KT"
+      "valor": "25 kt (sostenido)",
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Lunes 07 · 18 a 21 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 50 KT"
+      "detalle": "W/SW 20/25 KT rachas 40 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Lunes 07 · 21 a 24 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "W/SW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "temperatura",
-      "cuando": "Martes 08 · 18 a 21 Hora Local",
+      "cuando": "Martes 08 · 00 a 03 Hora Local",
       "valor": "-11 °C",
       "detalle": "-11°C / -10°C"
     },
     {
       "tipo": "viento",
-      "cuando": "Martes 08 · 18 a 21 Hora Local",
+      "cuando": "Martes 08 · 00 a 03 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "E/SE 20/25 KT rachas 40 KT"
+      "detalle": "W/SW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "temperatura",
-      "cuando": "Martes 08 · 21 a 24 Hora Local",
-      "valor": "-12 °C",
-      "detalle": "-12°C / -11°C"
+      "cuando": "Martes 08 · 03 a 06 Hora Local",
+      "valor": "-11 °C",
+      "detalle": "-11°C / -10°C"
+    },
+    {
+      "tipo": "temperatura",
+      "cuando": "Martes 08 · 06 a 09 Hora Local",
+      "valor": "-11 °C",
+      "detalle": "-11°C / -10°C"
     },
     {
       "tipo": "viento",
       "cuando": "Martes 08 · 21 a 24 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "Este 15/25 KT rachas 45 KT"
+      "detalle": "W/SW 20/25 KT rachas 40 KT"
     }
   ]
 }
