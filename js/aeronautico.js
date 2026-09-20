@@ -1,37 +1,35 @@
-
-Aeronautico · JS
-// ════════════════════════════════════════════════════════════════
-//  AERONÁUTICO — lee "taf_base_prat" (TAF con clave internacional)
+// ------------------------------------------------------------
+//  AERONAUTICO - lee "taf_base_prat" (TAF con clave internacional)
 //  y "aero_base_prat" (detalle METAR pronosticado por tramo) desde
 //  Google Sheets, y renderiza ambos. Solo se muestra para el sector
 //  Base Prat (key: "prat").
 //
 //  Columnas esperadas en aero_base_prat (CSV), en este orden:
-//    Día, Tramo, Viento, Categoria_Vuelo, Techo_Nubes_m,
+//    Dia, Tramo, Viento, Categoria_Vuelo, Techo_Nubes_m,
 //    Visibilidad, Punto_Rocio, Temp, METAR
 //
 //  Columnas esperadas en taf_base_prat: TAF, Generado_UTC
-// ════════════════════════════════════════════════════════════════
- 
+// ------------------------------------------------------------
+
 import { getCSVUrl } from "./config.js?v=20260721010000";
 import { esc } from "./utils.js?v=20260721010000";
- 
-// GIDs de las hojas. Se obtienen abriendo cada pestaña en Google
-// Sheets y copiando el parámetro gid= de la URL del navegador.
+
+// GIDs de las hojas. Se obtienen abriendo cada pestana en Google
+// Sheets y copiando el parametro gid= de la URL del navegador.
 const GID_AERO_PRAT = "2094326646";
 const GID_TAF_PRAT = "REEMPLAZAR_GID_TAF_PRAT";
- 
+
 const COLORES_CATEGORIA = {
   VFR:  { color: "#1a9850", label: "VFR — Visual" },
   MVFR: { color: "#3288bd", label: "MVFR — Visual marginal" },
   IFR:  { color: "#f46d43", label: "IFR — Instrumental" },
   LIFR: { color: "#d73027", label: "LIFR — Instrumental bajo" },
 };
- 
+
 const secc = () => document.getElementById("aero-section");
 const contTaf = () => document.getElementById("aero-taf-content");
 const contTabla = () => document.getElementById("aero-content");
- 
+
 function bloqueCargando(msg) {
   return `
     <div class="state-box">
@@ -39,7 +37,7 @@ function bloqueCargando(msg) {
       <div class="state-title">${esc(msg)}</div>
     </div>`;
 }
- 
+
 function bloqueError(mensaje) {
   return `
     <div class="state-box">
@@ -48,48 +46,48 @@ function bloqueError(mensaje) {
       <div class="state-msg">${esc(mensaje)}</div>
     </div>`;
 }
- 
+
 function chipCategoria(cat) {
   const info = COLORES_CATEGORIA[cat] || { color: "#888", label: cat || "—" };
   return `<span class="aero-chip" style="background:${info.color}">${esc(info.label)}</span>`;
 }
- 
-// ── Parsers de los campos formateados (para meteograma/airgram) ──
+
+// -- Parsers de los campos formateados (para meteograma/airgram) --
 function parseVientoKt(vientoStr) {
   // "SE 20/25 KT rachas 35 KT" -> { max: 25, gust: 35 }
   const nums = (vientoStr || "").match(/\d+/g)?.map(Number) || [];
-  // El primer par de números es min/max sostenido; si hay "rachas N" al final, es la ráfaga.
+  // El primer par de numeros es min/max sostenido; si hay "rachas N" al final, es la rafaga.
   const rachaMatch = (vientoStr || "").match(/rachas\s+(\d+)/i);
   const max = nums.length >= 2 ? nums[1] : (nums[0] || 0);
   const gust = rachaMatch ? Number(rachaMatch[1]) : null;
   return { max, gust };
 }
- 
+
 function parseTechoM(techoStr) {
   if (!techoStr || techoStr === "Sin techo") return null;
   const n = parseInt(techoStr, 10);
   return Number.isFinite(n) ? n : null;
 }
- 
+
 function parseTempProm(tempStr) {
   // "-10°C / -9°C" -> promedio
   const nums = (tempStr || "").match(/-?\d+/g)?.map(Number) || [];
   if (!nums.length) return null;
   return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
- 
+
 let chartMeteograma = null;
- 
+
 function renderMeteograma(filasDia) {
   const cont = document.getElementById("aero-tabla-wrap");
   if (!cont) return;
   cont.innerHTML = `<div class="meteograma-wrap"><canvas id="chart-meteograma"></canvas></div>`;
- 
+
   const labels = filasDia.map((r) => r[1]); // Tramo
   const vientos = filasDia.map((r) => parseVientoKt(r[2]));
   const techos = filasDia.map((r) => parseTechoM(r[4]));
   const temps = filasDia.map((r) => parseTempProm(r[7]));
- 
+
   const ctx = document.getElementById("chart-meteograma");
   if (chartMeteograma) chartMeteograma.destroy();
   chartMeteograma = new Chart(ctx, {
@@ -148,7 +146,7 @@ function renderMeteograma(filasDia) {
     },
   });
 }
- 
+
 function renderAirgram(filasDia) {
   const cont = document.getElementById("aero-tabla-wrap");
   if (!cont) return;
@@ -168,19 +166,19 @@ function renderAirgram(filasDia) {
     .join("");
   cont.innerHTML = `<div class="airgram-wrap">${bloques}</div>`;
 }
- 
+
 function renderVistaSegunModo(filasDia) {
   if (vistaActual === "meteograma") renderMeteograma(filasDia);
   else if (vistaActual === "airgram") renderAirgram(filasDia);
   else renderTablaDia(filasDia);
 }
- 
-// ── Bloque TAF (texto monoespaciado, clave internacional) ────────
+
+// -- Bloque TAF (texto monoespaciado, clave internacional) --
 function renderTaf(filas) {
   if (!contTaf()) return;
   const lineasTaf = filas.map((r) => r[0]).filter(Boolean);
   const generado = filas[0]?.[1] || "";
- 
+
   contTaf().innerHTML = `
     <pre class="taf-block">${lineasTaf.map(esc).join("\n")}</pre>
     ${generado ? `<p class="aero-nota">Generado ${esc(generado)} UTC</p>` : ""}
@@ -188,16 +186,16 @@ function renderTaf(filas) {
     visibilidad, fenómenos, nubes y BECMG) generada operativamente a partir de los modelos;
     no es un TAF OACI oficial emitido por autoridad aeronáutica certificada.</p>`;
 }
- 
+
 function cargarTaf() {
   if (!contTaf()) return;
   contTaf().innerHTML = bloqueCargando("Cargando TAF…");
- 
+
   if (GID_TAF_PRAT === "REEMPLAZAR_GID_TAF_PRAT") {
     contTaf().innerHTML = bloqueError("Falta configurar el GID de la hoja taf_base_prat en aeronautico.js.");
     return;
   }
- 
+
   Papa.parse(getCSVUrl(GID_TAF_PRAT), {
     download: true,
     header: false,
@@ -216,11 +214,11 @@ function cargarTaf() {
     },
   });
 }
- 
-// ── Tabla METAR pronosticado por tramo (+ meteograma/airgram) ────
+
+// -- Tabla METAR pronosticado por tramo (+ meteograma/airgram) --
 let vistaActual = "tabla";
 let filasAeroGlobal = [];
- 
+
 function renderTablaDia(filasDia) {
   const cont = document.getElementById("aero-tabla-wrap");
   if (!cont) return;
@@ -240,7 +238,7 @@ function renderTablaDia(filasDia) {
         </tr>`;
     })
     .join("");
- 
+
   cont.innerHTML = `
     <table class="aero-table">
       <thead>
@@ -252,19 +250,19 @@ function renderTablaDia(filasDia) {
       <tbody>${filasHtml}</tbody>
     </table>`;
 }
- 
+
 function filasDelDia(dia) {
   return filasAeroGlobal.filter((r) => r[0] === dia);
 }
- 
+
 function renderTablaAero(filas) {
   filasAeroGlobal = filas;
   const dias = [...new Set(filas.map((r) => r[0]))];
- 
+
   const tabsHtml = dias
     .map((d, i) => `<button class="aero-dia-tab${i === 0 ? " active" : ""}" data-dia="${esc(d)}">${esc(d)}</button>`)
     .join("");
- 
+
   const vistasHtml = [
     { id: "tabla", label: "📋 Tabla" },
     { id: "meteograma", label: "📈 Meteograma" },
@@ -272,7 +270,7 @@ function renderTablaAero(filas) {
   ]
     .map((v) => `<button class="aero-vista-tab${vistaActual === v.id ? " active" : ""}" data-vista="${v.id}">${v.label}</button>`)
     .join("");
- 
+
   if (!contTabla()) return;
   contTabla().innerHTML = `
     <div class="aero-vistas-tabs">${vistasHtml}</div>
@@ -280,9 +278,9 @@ function renderTablaAero(filas) {
     <div class="aero-tabla-wrap" id="aero-tabla-wrap"></div>
     <p class="aero-nota">Categoría de vuelo (VFR/MVFR/IFR/LIFR) y METAR pronosticado por tramo
     son estimaciones operativas propias derivadas de los modelos, no observaciones reales.</p>`;
- 
+
   renderVistaSegunModo(filasDelDia(dias[0]));
- 
+
   contTabla().querySelectorAll(".aero-dia-tab").forEach((btn) => {
     btn.addEventListener("click", () => {
       contTabla().querySelectorAll(".aero-dia-tab").forEach((b) => b.classList.remove("active"));
@@ -290,7 +288,7 @@ function renderTablaAero(filas) {
       renderVistaSegunModo(filasDelDia(btn.dataset.dia));
     });
   });
- 
+
   contTabla().querySelectorAll(".aero-vista-tab").forEach((btn) => {
     btn.addEventListener("click", () => {
       contTabla().querySelectorAll(".aero-vista-tab").forEach((b) => b.classList.remove("active"));
@@ -301,11 +299,11 @@ function renderTablaAero(filas) {
     });
   });
 }
- 
+
 function cargarTablaAero() {
   if (!contTabla()) return;
   contTabla().innerHTML = bloqueCargando("Cargando detalle METAR por tramo…");
- 
+
   Papa.parse(getCSVUrl(GID_AERO_PRAT), {
     download: true,
     header: false,
@@ -324,13 +322,13 @@ function cargarTablaAero() {
     },
   });
 }
- 
+
 export function cargarAeronautico() {
   cargarTaf();
   cargarTablaAero();
 }
- 
-// Muestra u oculta la sección aeronáutica según el sector activo.
+
+// Muestra u oculta la seccion aeronautica segun el sector activo.
 export function actualizarVisibilidadAero(sector) {
   const s = secc();
   if (!s) return;
@@ -338,4 +336,3 @@ export function actualizarVisibilidadAero(sector) {
   s.style.display = esPrat ? "" : "none";
   if (esPrat) cargarAeronautico();
 }
- 
