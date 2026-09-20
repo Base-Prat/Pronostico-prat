@@ -1,3 +1,6 @@
+
+
+Index · HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,22 +8,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Sistema meteorológico de apoyo para sectores antárticos y Paso Drake." />
   <title>Sistema Meteorológico Antártico | Apoyo a la decisión</title>
-
+ 
   <!-- Librerías externas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
-
+ 
   <!-- Leaflet + mapa de viento -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
+ 
   <!-- Estilos propios -->
   <link rel="stylesheet" href="css/styles.css?v=20260721010000" />
   <link rel="stylesheet" href="css/widget.css?v=20260806" />
   <link rel="stylesheet" href="css/mapa-viento.css?v=20260721010000" />
   <link rel="stylesheet" href="css/wc-extra.css?v=20260806" />
-  <link rel="stylesheet" href="css/aeronautico.css?v=20260806" />
-
+  <link rel="stylesheet" href="css/aeronautico.css?v=20260920" />
+ 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#0a2540" />
@@ -32,24 +35,24 @@
   <base target="_blank" />
 </head>
 <body>
-
+ 
   <button class="hamburger-btn" id="hamburger-btn" aria-label="Abrir menú">
     <span></span><span></span><span></span>
   </button>
   <button class="btn-ver-web">🖥️ Ver versión escritorio</button>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
+ 
   <aside class="sidebar" id="sidebar">
     <div class="logo-container">
       <img src="assets/logo.png" alt="Logo del proyecto meteorológico" />
     </div>
     <h2>Sistema Meteorológico Antártico</h2>
-
+ 
     <nav class="sidebar-nav" aria-label="Fuentes externas">
       <div class="sidebar-nav-title">Fuentes oficiales y cartas</div>
       <div id="sidebar-links"></div>
     </nav>
-
+ 
     <div class="risk-legend">
       <h4>Referencia viento (sost.)</h4>
       <div class="legend-item"><span class="l-bajo">● Bajo:</span><span>1 - 15 kts</span></div>
@@ -58,7 +61,7 @@
       <div class="legend-item"><span class="l-peli">● Peligro:</span><span>30+ kts</span></div>
     </div>
   </aside>
-
+ 
   <main class="main-content">
     <header>
       <div class="header-bg-img" id="header-bg-img"></div>
@@ -80,7 +83,7 @@
         </div>
       </div>
     </header>
-
+ 
     <section class="astro-bar" aria-label="Datos astronómicos y de actualización">
       <div class="astro-item"><label>🌅 Amanecer</label><span>05:31</span></div>
       <div class="astro-item"><label>🌇 Puesta de sol</label><span>20:50</span></div>
@@ -89,26 +92,29 @@
       <div class="astro-item"><label>📅 Actualización</label><span id="current-date">--/--/----</span></div>
       <div class="astro-item"><label>🔄 Última corrida</label><span id="last-run">--:-- UTC | --</span></div>
     </section>
-
+ 
     <nav class="sector-tabs" id="sector-tabs" aria-label="Sectores"></nav>
     <nav class="days-nav" id="days-nav" aria-label="Días"></nav>
     <section class="grid-container" id="grid-pronostico"></section>
-
+ 
     <section class="meteotabla-section" aria-label="Meteotabla de pronóstico">
       <h2 class="mt-titulo">Meteotabla — pronóstico horario</h2>
       <div id="meteotabla"></div>
     </section>
-
+ 
     <section class="aero-section" id="aero-section" aria-label="Pronóstico aeronáutico Base Prat" style="display:none">
       <h2 class="mt-titulo">✈️ Pronóstico aeronáutico — Base Prat</h2>
+      <div class="taf-titulo">TAF</div>
+      <div id="aero-taf-content"></div>
+      <div class="aero-metar-titulo">Detalle METAR pronosticado por tramo</div>
       <div id="aero-content"></div>
     </section>
-
+ 
     <section class="mapa-viento-section" aria-label="Mapa de viento animado" style="display:none">
       <h2>Campo de viento — Península Antártica y Paso Drake</h2>
       <div id="mapa-viento"></div>
     </section>
-
+ 
     <section class="footer-section">
       <h2>Sitios de interés</h2>
       <div class="row-container">
@@ -127,13 +133,13 @@
         <a href="https://x.com/metarmada_valp" class="btn-social">@metarmada_valp</a>
       </div>
     </section>
-
+ 
     <footer class="credits-bar">
       <p>© 2026</p>
       <p>Meteorología Base Naval Antártica Capitán Arturo Prat</p>
     </footer>
   </main>
-
+ 
   <div id="modalDetalle" class="modal">
     <div class="modal-content">
       <span class="modal-close" id="modal-close" aria-label="Cerrar">&times;</span>
@@ -157,7 +163,7 @@
       </table>
     </div>
   </div>
-
+ 
   <!-- WIDGET CALCULADORA -->
   <div id="prat-wc" class="wc-widget">
     <div class="wc-head">
@@ -184,16 +190,16 @@
       <p class="wc-note">Basado en la tabla oficial de enfriamiento por viento (Base Prat).</p>
     </div>
   </div>
-
+ 
   <!-- Botón para reabrir la calculadora (aparece solo si se cerró) -->
   <button id="prat-reopen" aria-label="Abrir calculadora" style="display:none">🌡️</button>
-
+ 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-velocity@2.1.0/dist/leaflet-velocity.min.js"></script>
-
-  <script type="module" src="js/app.js?v=20260721010000"></script>
+ 
+  <script type="module" src="js/app.js?v=20260920001"></script>
   <script type="module" src="js/push.js?v=20260806"></script>
-
+ 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
