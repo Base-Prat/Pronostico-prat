@@ -1,0 +1,81 @@
+.aero-section {
+  margin: 24px 16px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #0f2a44;
+  color: #eef4fb;
+}
+
+.aero-dias-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  padding-bottom: 4px;
+}
+
+.aero-dia-tab {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border: 1px solid #2c5478;
+  border-radius: 20px;
+  background: transparent;
+  color: #cfe0f0;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.aero-dia-tab.active {
+  background: #1a5c9c;
+  border-color: #1a5c9c;
+  color: #fff;
+}
+
+.aero-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.aero-table th,
+.aero-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.aero-table th {
+  color: #9fc0dd;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.aero-taf {
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.78rem;
+  color: #cfe0f0;
+}
+
+.aero-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.aero-nota {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: #8ea9c3;
+}
+
+@media (max-width: 640px) {
+  .aero-tabla-wrap {
+    overflow-x: auto;
+  }
+}
