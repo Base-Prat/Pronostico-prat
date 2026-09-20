@@ -11,7 +11,6 @@ import { cerrarModal } from "./graficos.js?v=20260721010000";
 import { initCalculadora } from "./calculadora.js?v=20260721010000";
 import { cargarMeteotabla } from "./meteotabla.js?v=20260721010000";
 import { initMapaViento } from "./mapa-viento.js?v=20260721010000";
-import { actualizarVisibilidadAero } from "./aeronautico.js?v=20260920b";
 
 // ── Enlaces del sidebar (fuentes externas oficiales) ─────────────
 function initEnlacesSidebar() {
@@ -74,7 +73,6 @@ function seleccionarSector(sector, btn) {
 
   setSectorActivo(sector);
   cargarMeteotabla(sector);
-  actualizarVisibilidadAero(sector);
   cerrarSidebar();
 }
 
@@ -135,7 +133,6 @@ function init() {
   aplicarCabeceraSector(SECTORES[0]);
   setSectorActivo(SECTORES[0]);
   cargarMeteotabla(SECTORES[0]);
-  actualizarVisibilidadAero(SECTORES[0]);
 
   // Datos en vivo + reloj.
   actualizarReloj();
