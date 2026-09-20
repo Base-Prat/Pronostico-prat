@@ -31,6 +31,69 @@
   color: #fff;
 }
 
+.aero-vistas-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.aero-vista-tab {
+  padding: 6px 14px;
+  border: 1px solid #2c5478;
+  border-radius: 6px;
+  background: transparent;
+  color: #cfe0f0;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.aero-vista-tab.active {
+  background: #2c5478;
+  color: #fff;
+}
+
+.meteograma-wrap {
+  background: #08192c;
+  border: 1px solid #2c5478;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 260px;
+}
+
+.airgram-wrap {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.airgram-bloque {
+  flex: 0 0 120px;
+  background: #08192c;
+  border: 1px solid #1c3a56;
+  border-top: 4px solid #888;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.airgram-tramo {
+  color: #9fc0dd;
+  font-size: 0.68rem;
+  margin-bottom: 4px;
+}
+
+.airgram-cat {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.airgram-dato {
+  color: #cfe0f0;
+  line-height: 1.3;
+}
+
 .aero-table {
   width: 100%;
   border-collapse: collapse;
