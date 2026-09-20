@@ -11,7 +11,7 @@ import { cerrarModal } from "./graficos.js?v=20260721010000";
 import { initCalculadora } from "./calculadora.js?v=20260721010000";
 import { cargarMeteotabla } from "./meteotabla.js?v=20260721010000";
 import { initMapaViento } from "./mapa-viento.js?v=20260721010000";
-import { actualizarVisibilidadAero } from "./aeronautico.js?v=20260920";
+import { actualizarVisibilidadAero } from "./aeronautico.js?v=20260920b";
 
 // ── Enlaces del sidebar (fuentes externas oficiales) ─────────────
 function initEnlacesSidebar() {
