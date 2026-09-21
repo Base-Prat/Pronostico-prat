@@ -17,7 +17,7 @@ import { esc } from "./utils.js?v=20260721010000";
 // GIDs de las hojas. Se obtienen abriendo cada pestana en Google
 // Sheets y copiando el parametro gid= de la URL del navegador.
 const GID_AERO_PRAT = "2094326646";
-const GID_TAF_PRAT = "REEMPLAZAR_GID_TAF_PRAT";
+const GID_TAF_PRAT = "867101644";
 
 const COLORES_CATEGORIA = {
   VFR:  { color: "#1a9850", label: "VFR — Visual" },
