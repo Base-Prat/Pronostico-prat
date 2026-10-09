@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-09T08:59:49.146832+00:00",
+  "generado": "2026-10-09T16:09:09.744637+00:00",
   "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
   "umbrales": {
     "visibilidad_km": 1.0,
@@ -10,39 +10,33 @@
   "avisos": [
     {
       "tipo": "viento",
-      "cuando": "Viernes 09 · 00 a 03 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "W/NW 20/25 KT rachas 40 KT"
-    },
-    {
-      "tipo": "viento",
       "cuando": "Viernes 09 · 03 a 06 Hora Local",
-      "valor": "30 kt (sostenido)",
-      "detalle": "W/NW 20/30 KT rachas 50 KT"
+      "valor": "25 kt (sostenido)",
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 09 · 06 a 09 Hora Local",
-      "valor": "35 kt (sostenido)",
-      "detalle": "W/NW 25/35 KT rachas 50 KT"
+      "valor": "25 kt (sostenido)",
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 09 · 09 a 12 Hora Local",
-      "valor": "30 kt (sostenido)",
-      "detalle": "W/NW 20/30 KT rachas 45 KT"
+      "valor": "25 kt (sostenido)",
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 09 · 12 a 15 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "detalle": "Weste 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Viernes 09 · 15 a 18 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "detalle": "W/NW 20/25 KT rachas 40 KT"
     },
     {
       "tipo": "viento",
@@ -53,44 +47,56 @@
     {
       "tipo": "viento",
       "cuando": "Viernes 09 · 21 a 24 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "W/NW 20/25 KT rachas 45 KT"
+      "valor": "35 kt (sostenido)",
+      "detalle": "W/NW 25/35 KT rachas 50 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 10 · 00 a 03 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "W/NW 20/25 KT rachas 50 KT"
+      "valor": "35 kt (sostenido)",
+      "detalle": "W/NW 25/35 KT rachas 50 KT"
     },
     {
       "tipo": "viento",
       "cuando": "Sábado 10 · 03 a 06 Hora Local",
       "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 40 KT"
+      "detalle": "W/NW 20/25 KT rachas 45 KT"
     },
     {
       "tipo": "visibilidad",
-      "cuando": "Martes 13 · 12 a 15 Hora Local",
+      "cuando": "Miércoles 14 · 12 a 15 Hora Local",
       "valor": "0.5 km",
       "detalle": "0.5/4 KM niebla"
     },
     {
       "tipo": "viento",
-      "cuando": "Jueves 15 · 03 a 06 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 35 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Jueves 15 · 06 a 09 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 35 KT"
-    },
-    {
-      "tipo": "viento",
-      "cuando": "Sábado 17 · 15 a 18 Hora Local",
+      "cuando": "Sábado 17 · 18 a 21 Hora Local",
       "valor": "25 kt (sostenido)",
       "detalle": "W/NW 20/25 KT rachas 35 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Domingo 18 · 12 a 15 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "NW 20/25 KT rachas 35 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Domingo 18 · 15 a 18 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "W/NW 20/25 KT rachas 40 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Domingo 18 · 18 a 21 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "W/NW 20/25 KT rachas 40 KT"
+    },
+    {
+      "tipo": "viento",
+      "cuando": "Domingo 18 · 21 a 24 Hora Local",
+      "valor": "25 kt (sostenido)",
+      "detalle": "Weste 20/25 KT rachas 40 KT"
     }
   ]
 }
