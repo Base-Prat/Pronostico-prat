@@ -1,5 +1,5 @@
 {
-  "generado": "2026-11-24T06:56:35.937453+00:00",
+  "generado": "2026-11-24T18:51:12.678851+00:00",
   "sector": "Bahía Chile - Puerto Soberanía (Base Prat)",
   "umbrales": {
     "visibilidad_km": 1.0,
@@ -10,33 +10,33 @@
   "avisos": [
     {
       "tipo": "viento",
-      "cuando": "Domingo 29 · 21 a 24 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "NW 20/25 KT rachas 35 KT"
+      "cuando": "Jueves 26 · 09 a 12 Hora Local",
+      "valor": "30 kt (sostenido)",
+      "detalle": "Este 20/30 KT rachas 45 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Lunes 30 · 03 a 06 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "W/NW 20/25 KT rachas 40 KT"
+      "cuando": "Jueves 26 · 12 a 15 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "Este 30/40 KT rachas 55 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Lunes 30 · 06 a 09 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 45 KT"
+      "cuando": "Jueves 26 · 15 a 18 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "E/SE 30/40 KT rachas 55 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Lunes 30 · 09 a 12 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 45 KT"
+      "cuando": "Jueves 26 · 18 a 21 Hora Local",
+      "valor": "40 kt (sostenido)",
+      "detalle": "E/SE 30/40 KT rachas 60 KT"
     },
     {
       "tipo": "viento",
-      "cuando": "Lunes 30 · 12 a 15 Hora Local",
-      "valor": "25 kt (sostenido)",
-      "detalle": "Weste 20/25 KT rachas 45 KT"
+      "cuando": "Jueves 26 · 21 a 24 Hora Local",
+      "valor": "30 kt (sostenido)",
+      "detalle": "SE 20/30 KT rachas 55 KT"
     }
   ]
 }
